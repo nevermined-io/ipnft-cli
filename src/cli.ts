@@ -1,6 +1,14 @@
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 import { accounts, getNft, mint } from "./commands";
+import chalk from "chalk";
+
+const cmdHandler = async (cmd: Function, argv: any) => {
+  const { network } = argv;
+
+  console.log(chalk.dim(`Using network: ${chalk.whiteBright(network)}\n`));
+  return process.exit(await accounts(argv));
+};
 
 yargs(hideBin(process.argv))
   .showHelpOnFail(true)
@@ -16,7 +24,7 @@ yargs(hideBin(process.argv))
       });
     },
     async (argv) => {
-      process.exit(await accounts(argv));
+      return cmdHandler(accounts, argv);
     }
   )
   .command(
@@ -42,7 +50,7 @@ yargs(hideBin(process.argv))
         });
     },
     async (argv) => {
-      process.exit(await mint(argv));
+      return cmdHandler(mint, argv);
     }
   )
   .command(
@@ -55,7 +63,7 @@ yargs(hideBin(process.argv))
       });
     },
     async (argv) => {
-      process.exit(await mint(argv));
+      return cmdHandler(mint, argv);
     }
   )
   .command(
@@ -68,7 +76,7 @@ yargs(hideBin(process.argv))
       });
     },
     async (argv) => {
-      process.exit(await getNft(argv));
+      return cmdHandler(getNft, argv);
     }
   )
   .option("verbose", {
