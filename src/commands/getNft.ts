@@ -1,11 +1,14 @@
 import { StatusCodes, getConfig, formatDid, loadNftContract } from "../utils";
 import { Nevermined } from "@nevermined-io/nevermined-sdk-js";
 import chalk from "chalk";
+import { zeroX } from "@nevermined-io/nevermined-sdk-js/dist/node/utils";
 
 export const getNft = async (argv: any): Promise<number> => {
   const { verbose, network, did } = argv;
 
-  if (verbose) console.log(`Loading information for did: ${did}`);
+  const did0x = zeroX(did);
+
+  if (verbose) console.log(`Loading information for did: ${did0x}`);
 
   const config = getConfig(network as string);
   const nvm = await Nevermined.getInstance(config.nvm);
@@ -18,11 +21,11 @@ export const getNft = async (argv: any): Promise<number> => {
   const nft = await loadNftContract(config);
 
   const [contractTokenUri, contractTokenOwner] = await Promise.all([
-    nft.methods.tokenURI(did).call(),
-    nft.methods.ownerOf(did).call(),
+    nft.methods.tokenURI(did0x).call(),
+    nft.methods.ownerOf(did0x).call(),
   ]);
 
-  const nvmDid = formatDid(did);
+  const nvmDid = formatDid(did0x);
   const { owner, url } = (await nvm.keeper.didRegistry.getDIDRegister(
     nvmDid
   )) as { owner: string; url: string };
@@ -35,7 +38,7 @@ export const getNft = async (argv: any): Promise<number> => {
   console.log("\n");
 
   console.log(chalk.dim(`====== Token Contract ======`));
-  console.log(chalk.dim(`====== ${did} ======`));
+  console.log(chalk.dim(`====== ${did0x} ======`));
   console.log(chalk.gray(`Url: ${contractTokenUri}`));
   console.log(chalk.gray(`Owner: ${contractTokenOwner}`));
 
