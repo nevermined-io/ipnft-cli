@@ -64,18 +64,24 @@ export const accounts = async (argv: any): Promise<number> => {
   );
 
   for (const a of loadedAccounts) {
-    console.log(chalk.dim(`===== Account ${a.index + 1} =====`));
-    console.log(chalk.gray(`Address: ${a.id}`));
-    console.log(chalk.gray(`ETH Balance: ${a.ethBalance}`));
-    console.log(chalk.gray(`Etherscan Url: ${a.url}`));
-    console.log(chalk.gray(`NFT Balance: ${a.nftBalance}`));
+    console.log(
+      chalk.dim(`===== Account ${chalk.whiteBright(a.index + 1)} =====`)
+    );
+    console.log(chalk.dim(`Address: ${chalk.whiteBright(a.id)}`));
+    console.log(chalk.dim(`ETH Balance: ${chalk.whiteBright(a.ethBalance)}`));
+    console.log(chalk.dim(`Etherscan Url: ${chalk.whiteBright(a.url)}`));
+    console.log(chalk.dim(`NFT Balance: ${chalk.whiteBright(a.nftBalance)}`));
 
     if (a.inventory.length > 0) {
-      console.log(chalk.dim(`\nInventory:`));
+      console.log(chalk.whiteBright(`\nNFT Inventory`));
       for (const inv of a.inventory) {
-        console.log(chalk.dim(`===== NFT ${inv!.tokenId} =====`));
-        console.log(chalk.dim(`Received at block: ${inv!.block}`));
-        console.log(chalk.dim(`Etherscan Url: ${inv!.url}`));
+        console.log(
+          chalk.dim(`===== NFT ${chalk.whiteBright(inv!.tokenId)} =====`)
+        );
+        console.log(
+          chalk.dim(`Received at block: ${chalk.whiteBright(inv!.block)}`)
+        );
+        console.log(chalk.dim(`Etherscan Url: ${chalk.whiteBright(inv!.url)}`));
       }
     }
 
