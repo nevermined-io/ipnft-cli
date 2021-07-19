@@ -1,0 +1,7 @@
+export enum StatusCodes {
+  OK = 0,
+  MINTER_NOT_OWNER,
+  FAILED_TO_CONNECT,
+  MINTER_NOT_AN_ACCOUNT,
+  NFT_ALREADY_OWNED,
+}
