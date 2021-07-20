@@ -32,8 +32,6 @@ export const accountsList = async (argv: any): Promise<number> => {
       const tokenBalance =
         (await nvm.keeper.token.balanceOf(a.getId())) / 10 ** decimals;
 
-      console.log(await nvm.keeper.token.balanceOf(a.getId()));
-
       const inventory = withInventory
         ? await Promise.all(
             (
