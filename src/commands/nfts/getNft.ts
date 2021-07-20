@@ -1,4 +1,4 @@
-import { StatusCodes, getConfig, formatDid, loadNftContract } from "../utils";
+import { StatusCodes, getConfig, formatDid, loadNftContract, Constants } from "../../utils";
 import { Nevermined } from "@nevermined-io/nevermined-sdk-js";
 import chalk from "chalk";
 import { zeroX } from "@nevermined-io/nevermined-sdk-js/dist/node/utils";
@@ -8,17 +8,17 @@ export const getNft = async (argv: any): Promise<number> => {
 
   const did0x = zeroX(did);
 
-  if (verbose) console.log(`Loading information for did: ${did0x}`);
+  if (verbose) console.log(`Loading information for did: '${did0x}'`);
 
   const config = getConfig(network as string);
   const nvm = await Nevermined.getInstance(config.nvm);
 
   if (!nvm.keeper) {
-    console.log(chalk.red(`Nevermined could not connect to ${network}`));
+    console.log(Constants.ErrorNetwork(network));
     return StatusCodes.FAILED_TO_CONNECT;
   }
 
-  const nft = await loadNftContract(config);
+  const nft = loadNftContract(config);
 
   const [contractTokenUri, contractTokenOwner] = await Promise.all([
     nft.methods.tokenURI(did0x).call(),
@@ -30,17 +30,19 @@ export const getNft = async (argv: any): Promise<number> => {
     nvmDid
   )) as { owner: string; url: string };
 
-  console.log(chalk.dim(`====== Nevermined ======`));
-  console.log(chalk.dim(`====== ${nvmDid} ======`));
-  console.log(chalk.gray(`Url: ${url}`));
-  console.log(chalk.gray(`Owner: ${owner}`));
+  console.log(chalk.dim(`====== ${chalk.whiteBright("Nevermined")} ======`));
+  console.log(chalk.dim(`====== ${chalk.whiteBright(nvmDid)} ======`));
+  console.log(chalk.dim(`Url: ${chalk.whiteBright(url)}`));
+  console.log(chalk.dim(`Owner: ${chalk.whiteBright(owner)}`));
 
   console.log("\n");
 
-  console.log(chalk.dim(`====== Token Contract ======`));
-  console.log(chalk.dim(`====== ${did0x} ======`));
-  console.log(chalk.gray(`Url: ${contractTokenUri}`));
-  console.log(chalk.gray(`Owner: ${contractTokenOwner}`));
+  console.log(
+    chalk.dim(`====== ${chalk.whiteBright("Token Contract")} ======`)
+  );
+  console.log(chalk.dim(`====== ${chalk.whiteBright(did0x)} ======`));
+  console.log(chalk.dim(`Url: ${chalk.whiteBright(contractTokenUri)}`));
+  console.log(chalk.dim(`Owner: ${chalk.whiteBright(contractTokenOwner)}`));
 
   console.log("\n");
 
