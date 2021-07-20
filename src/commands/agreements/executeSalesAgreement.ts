@@ -1,15 +1,14 @@
 import {
   StatusCodes,
   getConfig,
-  loadNftContract,
   Constants,
+  findAccountOrFirst,
 } from "../../utils";
 import { ConditionState, Nevermined } from "@nevermined-io/nevermined-sdk-js";
 import chalk from "chalk";
-import utils from "web3-utils";
 
 export const executeSalesAgreement = async (argv: any): Promise<number> => {
-  const { verbose, network, agreementId, price, seller, buyer } = argv;
+  const { verbose, network, agreementId, seller, price, buyer } = argv;
 
   if (verbose)
     console.log(
@@ -30,6 +29,9 @@ export const executeSalesAgreement = async (argv: any): Promise<number> => {
     agreementId
   );
 
+  const decimals = await token.decimals();
+  const priceInWei = price * 10 ** decimals;
+
   const {
     lockPaymentCondition,
     escrowPaymentCondition,
@@ -37,20 +39,7 @@ export const executeSalesAgreement = async (argv: any): Promise<number> => {
 
   const accounts = await nvm.accounts.list();
 
-  let buyerAccount;
-
-  if (buyer) {
-    buyerAccount = accounts.find(
-      (a) => a.getId().toLowerCase() === buyer.toLowerCase()
-    );
-
-    if (!buyerAccount) {
-      console.log(chalk.red(`ERROR: Buyer is not an account!`));
-      return StatusCodes.BUYER_NOT_AN_ACCOUNT;
-    }
-  } else {
-    buyerAccount = accounts[0];
-  }
+  let buyerAccount = findAccountOrFirst(accounts, buyer);
 
   if (verbose) {
     console.log(chalk.dim(`DID: '${chalk.whiteBright(did)}'`));
@@ -62,14 +51,12 @@ export const executeSalesAgreement = async (argv: any): Promise<number> => {
     console.log(chalk.dim(`Price: '${chalk.whiteBright(price)}'`));
   }
 
-  const nft = loadNftContract(config);
-
   const { state } = await conditionStoreManager.getCondition(conditionIds[0]);
 
   if (state !== ConditionState.Fulfilled) {
     await token.approve(
       lockPaymentCondition.address,
-      utils.toWei(price.toString(), "ether").toString(),
+      priceInWei,
       buyerAccount.getId()
     );
 
@@ -78,13 +65,21 @@ export const executeSalesAgreement = async (argv: any): Promise<number> => {
       did,
       escrowPaymentCondition.address,
       token.address,
-      [price],
+      [priceInWei],
       [seller],
       buyerAccount.getId()
     );
+
+    const { state } = await conditionStoreManager.getCondition(conditionIds[0]);
+
+    console.log(
+      chalk.dim(
+        `Payment Condition is now: ${chalk.whiteBright(ConditionState[state])}`
+      )
+    );
   } else {
-    console.log(chalk.yellow("LockPaymentCondition already fulfilled!"));
-    return StatusCodes.ALREADY_DONE;
+    console.log(chalk.yellow("Payment Condition already fulfilled!"));
+    return StatusCodes.INCONCLUSIVE;
   }
 
   return StatusCodes.OK;

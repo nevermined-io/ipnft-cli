@@ -1,4 +1,9 @@
-import { Constants, getConfig, loadNftContract, StatusCodes } from "../../utils";
+import {
+  Constants,
+  getConfig,
+  loadNftContract,
+  StatusCodes,
+} from "../../utils";
 import { Nevermined } from "@nevermined-io/nevermined-sdk-js";
 import chalk from "chalk";
 import utils from "web3-utils";
@@ -33,30 +38,33 @@ export const accountsList = async (argv: any): Promise<number> => {
         (await nvm.keeper.token.balanceOf(a.getId())) / 10 ** decimals;
 
       const inventory = withInventory
-        ? await Promise.all(
-            (
-              await nft.getPastEvents("Transfer", {
-                fromBlock: 0,
-                toBlock: "latest",
-                filter: {
-                  to: a.getId(),
-                },
+        ? (
+            await Promise.all(
+              (
+                await nft.getPastEvents("Transfer", {
+                  fromBlock: 0,
+                  toBlock: "latest",
+                  filter: {
+                    to: a.getId(),
+                  },
+                })
+              ).map(async (l) => {
+                // check if the account is still the owner
+                if (
+                  ((await nft.methods
+                    .ownerOf(l.returnValues.tokenId)
+                    .call()) as string).toLowerCase() ===
+                  a.getId().toLowerCase()
+                ) {
+                  return {
+                    block: l.blockNumber,
+                    tokenId: utils.toHex(l.returnValues.tokenId),
+                    url: `${config.etherscanUrl}/token/${config.nftTokenAddress}?a=${l.returnValues.tokenId}#inventory`,
+                  };
+                }
               })
-            ).map(async (l) => {
-              // check if the account is still the owner
-              if (
-                ((await nft.methods
-                  .ownerOf(l.returnValues.tokenId)
-                  .call()) as string).toLowerCase() === a.getId().toLowerCase()
-              ) {
-                return {
-                  block: l.blockNumber,
-                  tokenId: utils.toHex(l.returnValues.tokenId),
-                  url: `${config.etherscanUrl}/token/${config.nftTokenAddress}?a=${l.returnValues.tokenId}#inventory`,
-                };
-              }
-            })
-          )
+            )
+          ).filter((inv) => !!inv)
         : [];
 
       return {

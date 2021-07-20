@@ -7,3 +7,4 @@ export * from "./accounts/accountsFund";
 // agreements
 export * from "./agreements/createSalesAgreement";
 export * from "./agreements/executeSalesAgreement";
+export * from "./agreements/finalizeSalesAgreement";

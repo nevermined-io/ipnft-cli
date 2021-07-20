@@ -3,6 +3,7 @@ import {
   getConfig,
   loadNftContract,
   Constants,
+  findAccountOrFirst,
 } from "../../utils";
 import { Nevermined } from "@nevermined-io/nevermined-sdk-js";
 import chalk from "chalk";
@@ -35,20 +36,7 @@ export const mint = async (argv: any): Promise<number> => {
 
   const accounts = await nvm.accounts.list();
 
-  let minterAccount;
-
-  if (minter) {
-    minterAccount = accounts.find(
-      (a) => a.getId().toLowerCase() === minter.toLowerCase()
-    );
-
-    if (!minterAccount) {
-      console.log(chalk.red(`ERROR: Minter is not an account!`));
-      return StatusCodes.MINTER_NOT_AN_ACCOUNT;
-    }
-  } else {
-    minterAccount = accounts[0];
-  }
+  let minterAccount = findAccountOrFirst(accounts, minter);
 
   const { didRegistry } = nvm.keeper;
 

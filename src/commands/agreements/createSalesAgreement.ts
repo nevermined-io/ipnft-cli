@@ -4,6 +4,7 @@ import {
   loadNftContract,
   prepareNFTSaleAgreement,
   Constants,
+  findAccountOrFirst,
 } from "../../utils";
 import { Nevermined } from "@nevermined-io/nevermined-sdk-js";
 import chalk from "chalk";
@@ -14,7 +15,12 @@ export const createSalesAgreement = async (argv: any): Promise<number> => {
 
   const did0x = zeroX(did);
 
-  if (verbose) console.log(`Creating sale agreement for DID: '${did0x}'`);
+  if (verbose)
+    console.log(
+      chalk.dim(
+        `Creating sale agreement for DID: '${chalk.whiteBright(did0x)}'`
+      )
+    );
 
   const config = getConfig(network as string);
   const nvm = await Nevermined.getInstance(config.nvm);
@@ -25,32 +31,27 @@ export const createSalesAgreement = async (argv: any): Promise<number> => {
   }
 
   const accounts = await nvm.accounts.list();
-
-  let sellerAccount;
-
-  if (seller) {
-    sellerAccount = accounts.find(
-      (a) => a.getId().toLowerCase() === seller.toLowerCase()
-    );
-
-    if (!sellerAccount) {
-      console.log(chalk.red(`ERROR: Buyer is not an account!`));
-      return StatusCodes.BUYER_NOT_AN_ACCOUNT;
-    }
-  } else {
-    sellerAccount = accounts[0];
-  }
+  const sellerAccount = findAccountOrFirst(accounts, seller);
 
   if (verbose) {
     console.log(chalk.dim(`DID: '${chalk.whiteBright(did0x)}'`));
-    console.log(chalk.dim(`Price: '${chalk.whiteBright(price)}'`));
-    console.log(chalk.dim(`Buyer: '${chalk.whiteBright(buyer)}'`));
     console.log(
       chalk.dim(`Seller: '${chalk.whiteBright(sellerAccount.getId())}'`)
     );
+    console.log(chalk.dim(`Buyer: '${chalk.whiteBright(buyer)}'`));
+    console.log(chalk.dim(`Price: '${chalk.whiteBright(price)}'`));
   }
 
   const nft = loadNftContract(config);
+
+  const owner = await nft.methods.ownerOf(did).call();
+
+  if (sellerAccount.getId().toLowerCase() !== owner.toLowerCase()) {
+    console.log(
+      chalk.red(`'${sellerAccount.getId()}' is not owner of '${did}'!`)
+    );
+    return StatusCodes.SELLER_NOT_OWNER;
+  }
 
   const { nft721SalesTemplate } = nvm.keeper.templates;
 
@@ -58,7 +59,7 @@ export const createSalesAgreement = async (argv: any): Promise<number> => {
     nvm,
     nftContractAddress: nft.options.address,
     did,
-    receiver: await nft.methods.ownerOf(did).call(),
+    receiver: sellerAccount.getId(),
     buyer,
     price,
   });

@@ -5,7 +5,9 @@ import {
   generateId,
   noZeroX,
 } from "@nevermined-io/nevermined-sdk-js/dist/node/utils";
-import { Nevermined } from "@nevermined-io/nevermined-sdk-js";
+import { Account, Nevermined } from "@nevermined-io/nevermined-sdk-js";
+import chalk from "chalk";
+import { StatusCodes } from "./enums";
 
 export const loadNftContract = (config: any): Contract => {
   const web3 = Web3Provider.getWeb3(config);
@@ -39,6 +41,9 @@ export const prepareNFTSaleAgreement = async ({
   price?: number;
 }) => {
   const { token } = nvm.keeper;
+  const decimals = await token.decimals();
+
+  price = price * 10 ** decimals;
 
   const {
     escrowPaymentCondition,
@@ -62,7 +67,7 @@ export const prepareNFTSaleAgreement = async ({
     await transferNft721Condition.hashValues(
       did,
       buyer,
-      price,
+      1,
       conditionIdLockPayment,
       nftContractAddress
     )
@@ -103,4 +108,24 @@ export const prepareNFTSaleAgreement = async ({
     agreementId,
     nftSalesAgreement,
   };
+};
+
+export const findAccountOrFirst = (
+  accounts: Account[],
+  address: string
+): Account => {
+  let account: Account | undefined = accounts[0]!;
+
+  if (address) {
+    account = accounts.find(
+      (a: Account) => a.getId().toLowerCase() === address.toLowerCase()
+    );
+
+    if (!account) {
+      console.log(chalk.red(`ERROR: '${address}' is not an account!`));
+      throw new Error(`${StatusCodes[StatusCodes.ADDRESS_NOT_AN_ACCOUNT]}`);
+    }
+  }
+
+  return account!;
 };

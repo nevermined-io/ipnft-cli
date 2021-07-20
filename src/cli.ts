@@ -7,6 +7,7 @@ import {
   executeSalesAgreement,
   accountsList,
   accountsFund,
+  finalizeSalesAgreement,
 } from "./commands";
 import chalk from "chalk";
 
@@ -138,6 +139,32 @@ y.command(
         },
         async (argv) => {
           return cmdHandler(executeSalesAgreement, argv);
+        }
+      )
+      .command(
+        "finalize-sale agreementId price buyer [seller]",
+        "creates an sales agreement",
+        (yargs) => {
+          return yargs
+            .positional("agreementId", {
+              describe: "the agreement id address",
+              type: "string",
+            })
+            .positional("price", {
+              describe: "the price of the asset",
+              type: "number",
+            })
+            .positional("buyer", {
+              describe: "the buyer address",
+              type: "string",
+            })
+            .positional("seller", {
+              describe: "the seller address",
+              type: "string",
+            });
+        },
+        async (argv) => {
+          return cmdHandler(finalizeSalesAgreement, argv);
         }
       );
   },
