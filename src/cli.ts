@@ -90,7 +90,7 @@ y.command(
       .usage("usage: $0 agreements <command> parameters [options]")
       .command(
         "create-sale did price buyer [seller]",
-        "creates an sales agreement",
+        "Creates an sales offer for an NFT with the given DID",
         (yargs) => {
           return yargs
             .positional("did", {
@@ -117,7 +117,7 @@ y.command(
 
       .command(
         "execute-sale agreementId price seller [buyer]",
-        "creates an sales agreement",
+        "Pays for an NFT and stores it in the escrow",
         (yargs) => {
           return yargs
             .positional("agreementId", {
@@ -143,7 +143,7 @@ y.command(
       )
       .command(
         "finalize-sale agreementId price buyer [seller]",
-        "creates an sales agreement",
+        "Transfers the NFT and retrieves the payment from the escrow",
         (yargs) => {
           return yargs
             .positional("agreementId", {
