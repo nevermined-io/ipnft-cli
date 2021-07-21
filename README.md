@@ -21,8 +21,6 @@ export NFT_TOKEN_ADDRESS="<your erc721 compatible token address>"
 
 to switch the ERC20 token address (optional):
 export ERC20_TOKEN_ADDRESS="<your erc20 compatible token address>"
-
-if set to 0x0000000000000000000000000000000000000000000000000000000000000000 the cli will assume payments in ETH
 ```
 
 ```
