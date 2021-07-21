@@ -1,5 +1,4 @@
-import { Constants, getConfig, loadNevermined, StatusCodes } from "../../utils";
-import { Nevermined } from "@nevermined-io/nevermined-sdk-js";
+import { getConfig, loadNevermined, StatusCodes } from "../../utils";
 import chalk from "chalk";
 
 export const accountsFund = async (argv: any): Promise<number> => {
@@ -9,7 +8,7 @@ export const accountsFund = async (argv: any): Promise<number> => {
     console.log(chalk.dim(`Funding account: '${chalk.whiteBright(account)}'`));
 
   const config = getConfig(network as string);
-  const { nvm } = await loadNevermined(config, network);
+  const { nvm } = await loadNevermined(config, network, verbose);
 
   if (!nvm.keeper) {
     return StatusCodes.FAILED_TO_CONNECT;

@@ -18,7 +18,7 @@ export const finalizeSalesAgreement = async (argv: any): Promise<number> => {
     );
 
   const config = getConfig(network as string);
-  const { nvm, token } = await loadNevermined(config, network);
+  const { nvm, token } = await loadNevermined(config, network, verbose);
 
   if (!nvm.keeper) {
     return StatusCodes.FAILED_TO_CONNECT;

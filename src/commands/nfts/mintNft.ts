@@ -28,7 +28,7 @@ export const mintNft = async (argv: any): Promise<number> => {
     );
 
   const config = getConfig(network as string);
-  const { nvm } = await loadNevermined(config, network);
+  const { nvm } = await loadNevermined(config, network, verbose);
 
   if (!nvm.keeper) {
     return StatusCodes.FAILED_TO_CONNECT;

@@ -204,9 +204,33 @@ export const printNftTokenBanner = async (nftContract: Contract) => {
   console.log("\n");
 };
 
+export const printErc20TokenBanner = async (token: Token) => {
+  const { address } = token;
+
+  const [name, symbol, decimals, totalSupply] = await Promise.all([
+    token.name(),
+    token.symbol(),
+    token.decimals(),
+    token.totalSupply(),
+  ]);
+
+  console.log("\n");
+  console.log(chalk.dim(`===== ERC20 Contract =====`));
+  console.log(chalk.dim(`Address: ${chalk.whiteBright(address)}`));
+  console.log(chalk.dim(`Name: ${chalk.whiteBright(name)}`));
+  console.log(chalk.dim(`Symbol: ${chalk.whiteBright(symbol)}`));
+  console.log(chalk.dim(`Decimals: ${chalk.whiteBright(decimals)}`));
+  console.log(
+    chalk.dim(
+      `Total Supply: ${chalk.whiteBright(totalSupply / 10 ** decimals)}`
+    )
+  );
+};
+
 export const loadNevermined = async (
   config: ConfigEntry,
-  network: string
+  network: string,
+  verbose: boolean = false
 ): Promise<{ token: Token | null; nvm: Nevermined }> => {
   const nvm = await Nevermined.getInstance(config.nvm);
 
@@ -230,10 +254,13 @@ export const loadNevermined = async (
     // if the token address is not zero try to load it
     token = nvm.keeper.token;
 
-    if (config.erc20TokenAddress.toLowerCase() !== nvm.keeper.token.address) {
+    if (
+      config.erc20TokenAddress.toLowerCase() !==
+      nvm.keeper.token.address.toLowerCase()
+    ) {
       console.log(
         chalk.yellow(
-          `WARNING: Using custom token at address '${config.erc20TokenAddress}'!\n`
+          `WARNING: Using custom token at address '${config.erc20TokenAddress}'!`
         )
       );
 
@@ -244,6 +271,8 @@ export const loadNevermined = async (
         },
         config.erc20TokenAddress
       );
+
+      if (verbose) await printErc20TokenBanner(token);
     }
   }
 

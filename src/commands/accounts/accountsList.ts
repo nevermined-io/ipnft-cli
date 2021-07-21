@@ -6,7 +6,6 @@ import {
   printNftTokenBanner,
   StatusCodes,
 } from "../../utils";
-import { Nevermined } from "@nevermined-io/nevermined-sdk-js";
 import chalk from "chalk";
 import utils from "web3-utils";
 
@@ -17,7 +16,7 @@ export const accountsList = async (argv: any): Promise<number> => {
 
   const config = getConfig(network as string);
 
-  const { nvm, token } = await loadNevermined(config, network);
+  const { nvm, token } = await loadNevermined(config, network, verbose);
 
   if (!nvm.keeper) {
     return StatusCodes.FAILED_TO_CONNECT;
