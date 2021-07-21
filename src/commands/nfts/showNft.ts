@@ -1,24 +1,35 @@
-import { StatusCodes, getConfig, formatDid, loadNftContract, Constants } from "../../utils";
+import {
+  StatusCodes,
+  getConfig,
+  formatDid,
+  loadNftContract,
+  Constants,
+  printNftTokenBanner,
+  loadNevermined,
+} from "../../utils";
 import { Nevermined } from "@nevermined-io/nevermined-sdk-js";
 import chalk from "chalk";
 import { zeroX } from "@nevermined-io/nevermined-sdk-js/dist/node/utils";
 
-export const getNft = async (argv: any): Promise<number> => {
+export const showNft = async (argv: any): Promise<number> => {
   const { verbose, network, did } = argv;
 
   const did0x = zeroX(did);
 
-  if (verbose) console.log(`Loading information for did: '${did0x}'`);
+  if (verbose)
+    console.log(
+      chalk.dim(`Loading information for did: '${chalk.whiteBright(did0x)}'`)
+    );
 
   const config = getConfig(network as string);
-  const nvm = await Nevermined.getInstance(config.nvm);
+  const { nvm } = await loadNevermined(config, network);
 
   if (!nvm.keeper) {
-    console.log(Constants.ErrorNetwork(network));
     return StatusCodes.FAILED_TO_CONNECT;
   }
 
   const nft = loadNftContract(config);
+  if (verbose) await printNftTokenBanner(nft);
 
   const [contractTokenUri, contractTokenOwner] = await Promise.all([
     nft.methods.tokenURI(did0x).call(),

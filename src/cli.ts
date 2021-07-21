@@ -1,13 +1,14 @@
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 import {
-  createSalesAgreement,
-  getNft,
-  mint,
-  executeSalesAgreement,
+  showNft,
+  mintNft,
   accountsList,
   accountsFund,
+  createSalesAgreement,
+  executeSalesAgreement,
   finalizeSalesAgreement,
+  createAccessAgreement,
 } from "./commands";
 import chalk from "chalk";
 
@@ -86,87 +87,134 @@ y.command(
   "agreements",
   "Agreements functions",
   (yargs) => {
-    return yargs
-      .usage("usage: $0 agreements <command> parameters [options]")
-      .command(
-        "create-sale did price buyer [seller]",
-        "Creates an sales offer for an NFT with the given DID",
-        (yargs) => {
-          return yargs
-            .positional("did", {
-              describe: "the DID to retrieve",
-              type: "string",
-            })
-            .positional("price", {
-              describe: "the price of the asset",
-              type: "number",
-            })
-            .positional("buyer", {
-              describe: "the buyer address",
-              type: "string",
-            })
-            .positional("seller", {
-              describe: "the seller address",
-              type: "string",
-            });
-        },
-        async (argv) => {
-          return cmdHandler(createSalesAgreement, argv);
-        }
-      )
-
-      .command(
-        "execute-sale agreementId price seller [buyer]",
-        "Pays for an NFT and stores it in the escrow",
-        (yargs) => {
-          return yargs
-            .positional("agreementId", {
-              describe: "the agreement id address",
-              type: "string",
-            })
-            .positional("price", {
-              describe: "the price of the asset",
-              type: "number",
-            })
-            .positional("seller", {
-              describe: "the seller address",
-              type: "string",
-            })
-            .positional("buyer", {
-              describe: "the buyer address",
-              type: "string",
-            });
-        },
-        async (argv) => {
-          return cmdHandler(executeSalesAgreement, argv);
-        }
-      )
-      .command(
-        "finalize-sale agreementId price buyer [seller]",
-        "Transfers the NFT and retrieves the payment from the escrow",
-        (yargs) => {
-          return yargs
-            .positional("agreementId", {
-              describe: "the agreement id address",
-              type: "string",
-            })
-            .positional("price", {
-              describe: "the price of the asset",
-              type: "number",
-            })
-            .positional("buyer", {
-              describe: "the buyer address",
-              type: "string",
-            })
-            .positional("seller", {
-              describe: "the seller address",
-              type: "string",
-            });
-        },
-        async (argv) => {
-          return cmdHandler(finalizeSalesAgreement, argv);
-        }
-      );
+    return (
+      yargs
+        .usage("usage: $0 agreements <command> parameters [options]")
+        // sales agreement
+        .command(
+          "create-sale did price buyer [seller]",
+          "Creates an sales offer for an NFT with the given DID",
+          (yargs) => {
+            return yargs
+              .positional("did", {
+                describe: "the DID to retrieve",
+                type: "string",
+              })
+              .positional("price", {
+                describe: "the price of the asset",
+                type: "number",
+              })
+              .positional("buyer", {
+                describe: "the buyer address",
+                type: "string",
+              })
+              .positional("seller", {
+                describe: "the seller address",
+                type: "string",
+              });
+          },
+          async (argv) => {
+            return cmdHandler(createSalesAgreement, argv);
+          }
+        )
+        .command(
+          "execute-sale agreementId price seller [buyer]",
+          "Pays for an NFT and stores it in the escrow",
+          (yargs) => {
+            return yargs
+              .positional("agreementId", {
+                describe: "the agreement id address",
+                type: "string",
+              })
+              .positional("price", {
+                describe: "the price of the asset",
+                type: "number",
+              })
+              .positional("seller", {
+                describe: "the seller address",
+                type: "string",
+              })
+              .positional("buyer", {
+                describe: "the buyer address",
+                type: "string",
+              });
+          },
+          async (argv) => {
+            return cmdHandler(executeSalesAgreement, argv);
+          }
+        )
+        .command(
+          "finalize-sale agreementId price buyer [seller]",
+          "Transfers the NFT and retrieves the payment from the escrow",
+          (yargs) => {
+            return yargs
+              .positional("agreementId", {
+                describe: "the agreement id address",
+                type: "string",
+              })
+              .positional("price", {
+                describe: "the price of the asset",
+                type: "number",
+              })
+              .positional("buyer", {
+                describe: "the buyer address",
+                type: "string",
+              })
+              .positional("seller", {
+                describe: "the seller address",
+                type: "string",
+              });
+          },
+          async (argv) => {
+            return cmdHandler(finalizeSalesAgreement, argv);
+          }
+        )
+        // access agreement
+        .command(
+          "create-access did accessor [holder]",
+          "Creates an access agreement",
+          (yargs) => {
+            return yargs
+              .positional("did", {
+                describe: "the DID to retrieve",
+                type: "string",
+              })
+              .positional("accessor", {
+                describe: "the accessor address",
+                type: "string",
+              })
+              .positional("holder", {
+                describe: "the holder address",
+                type: "string",
+              });
+          },
+          async (argv) => {
+            return cmdHandler(createAccessAgreement, argv);
+          }
+        )
+        .command(
+          "execute-access agreementId holder [accessor]",
+          "Executes an access agreement",
+          (yargs) => {
+            return yargs
+              .positional("agreementId", {
+                describe: "the agreement id address",
+                type: "string",
+              })
+              .positional("holder", {
+                describe: "the holder address",
+                type: "string",
+              })
+              .positional("accessor", {
+                describe: "the accessor address",
+                type: "string",
+              });
+          },
+          async (argv) => {
+            return cmdHandler(executeSalesAgreement, argv);
+          }
+        )
+    );
   },
   () => {
     yargs.showHelp();
@@ -180,7 +228,7 @@ y.command(
     return yargs
       .usage("usage: $0 nfts <command> parameters [options]")
       .command(
-        "did",
+        "show did",
         "Retrieves information about an NFT",
         (yargs) => {
           return yargs.positional("did", {
@@ -189,7 +237,7 @@ y.command(
           });
         },
         async (argv) => {
-          return cmdHandler(getNft, argv);
+          return cmdHandler(showNft, argv);
         }
       )
       .command(
@@ -215,7 +263,7 @@ y.command(
             });
         },
         async (argv) => {
-          return cmdHandler(mint, argv);
+          return cmdHandler(mintNft, argv);
         }
       );
   },

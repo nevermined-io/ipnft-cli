@@ -5,6 +5,8 @@ import {
   prepareNFTSaleAgreement,
   Constants,
   findAccountOrFirst,
+  printNftTokenBanner,
+  loadNevermined,
 } from "../../utils";
 import { Nevermined } from "@nevermined-io/nevermined-sdk-js";
 import chalk from "chalk";
@@ -18,15 +20,14 @@ export const createSalesAgreement = async (argv: any): Promise<number> => {
   if (verbose)
     console.log(
       chalk.dim(
-        `Creating sale agreement for DID: '${chalk.whiteBright(did0x)}'`
+        `Creating sales agreement for DID: '${chalk.whiteBright(did0x)}'`
       )
     );
 
   const config = getConfig(network as string);
-  const nvm = await Nevermined.getInstance(config.nvm);
+  const { nvm, token } = await loadNevermined(config, network);
 
   if (!nvm.keeper) {
-    console.log(Constants.ErrorNetwork(network));
     return StatusCodes.FAILED_TO_CONNECT;
   }
 
@@ -43,6 +44,7 @@ export const createSalesAgreement = async (argv: any): Promise<number> => {
   }
 
   const nft = loadNftContract(config);
+  if (verbose) await printNftTokenBanner(nft);
 
   const owner = await nft.methods.ownerOf(did).call();
 
@@ -57,6 +59,7 @@ export const createSalesAgreement = async (argv: any): Promise<number> => {
 
   const { agreementId, nftSalesAgreement } = await prepareNFTSaleAgreement({
     nvm,
+    token,
     nftContractAddress: nft.options.address,
     did,
     receiver: sellerAccount.getId(),

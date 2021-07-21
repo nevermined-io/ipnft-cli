@@ -1,7 +1,9 @@
 import {
   Constants,
   getConfig,
+  loadNevermined,
   loadNftContract,
+  printNftTokenBanner,
   StatusCodes,
 } from "../../utils";
 import { Nevermined } from "@nevermined-io/nevermined-sdk-js";
@@ -11,21 +13,24 @@ import utils from "web3-utils";
 export const accountsList = async (argv: any): Promise<number> => {
   const { verbose, network, withInventory } = argv;
 
-  if (verbose) console.log(`Loading accounts`);
+  if (verbose) console.log(chalk.dim(`Loading accounts ...`));
 
   const config = getConfig(network as string);
-  const nvm = await Nevermined.getInstance(config.nvm);
+
+  const { nvm, token } = await loadNevermined(config, network);
 
   if (!nvm.keeper) {
-    console.log(Constants.ErrorNetwork(network));
     return StatusCodes.FAILED_TO_CONNECT;
   }
 
   const accounts = await nvm.accounts.list();
 
   const nft = loadNftContract(config);
+  if (verbose) await printNftTokenBanner(nft);
 
-  const decimals = await nvm.keeper.token.decimals();
+  // if we have a token use it, otherwise fall back to ETH decimals
+  const decimals =
+    token !== null ? await token.decimals() : Constants.ETHDecimals;
 
   const loadedAccounts = await Promise.all(
     accounts.map(async (a, index) => {
@@ -35,7 +40,7 @@ export const accountsList = async (argv: any): Promise<number> => {
       );
 
       const tokenBalance =
-        (await nvm.keeper.token.balanceOf(a.getId())) / 10 ** decimals;
+        (token ? await token.balanceOf(a.getId()) : 0) / 10 ** decimals;
 
       const inventory = withInventory
         ? (
@@ -69,7 +74,7 @@ export const accountsList = async (argv: any): Promise<number> => {
 
       return {
         index,
-        id: a.getId(),
+        address: a.getId(),
         ethBalance,
         tokenBalance,
         url: `${config.etherscanUrl}/address/${a.getId()}`,
@@ -82,18 +87,19 @@ export const accountsList = async (argv: any): Promise<number> => {
 
   for (const a of loadedAccounts) {
     console.log(
-      chalk.dim(`===== Account ${chalk.whiteBright(a.index + 1)} =====`)
+      chalk.dim(`===== Account ${chalk.whiteBright(a.address)} =====`)
     );
-    console.log(chalk.dim(`Address: ${chalk.whiteBright(a.id)}`));
     console.log(chalk.dim(`ETH Balance: ${chalk.whiteBright(a.ethBalance)}`));
-    console.log(
-      chalk.dim(`Token Balance: ${chalk.whiteBright(a.tokenBalance)}`)
-    );
+    if (token !== null) {
+      console.log(
+        chalk.dim(`Token Balance: ${chalk.whiteBright(a.tokenBalance)}`)
+      );
+    }
     console.log(chalk.dim(`Etherscan Url: ${chalk.whiteBright(a.url)}`));
     console.log(chalk.dim(`NFT Balance: ${chalk.whiteBright(a.nftBalance)}`));
 
     if (a.inventory.length > 0) {
-      console.log(chalk.whiteBright(`\nNFT Inventory`));
+      console.log(chalk.dim(`\nNFT Inventory`));
       for (const inv of a.inventory) {
         console.log(
           chalk.dim(`===== NFT ${chalk.whiteBright(inv!.tokenId)} =====`)

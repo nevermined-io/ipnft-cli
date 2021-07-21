@@ -4,6 +4,7 @@ import {
   Constants,
   loadNftContract,
   findAccountOrFirst,
+  loadNevermined,
 } from "../../utils";
 import { ConditionState, Nevermined } from "@nevermined-io/nevermined-sdk-js";
 import chalk from "chalk";
@@ -17,15 +18,15 @@ export const finalizeSalesAgreement = async (argv: any): Promise<number> => {
     );
 
   const config = getConfig(network as string);
-  const nvm = await Nevermined.getInstance(config.nvm);
+  const { nvm, token } = await loadNevermined(config, network);
 
   if (!nvm.keeper) {
-    console.log(Constants.ErrorNetwork(network));
     return StatusCodes.FAILED_TO_CONNECT;
   }
 
-  const { conditionStoreManager, agreementStoreManager, token } = nvm.keeper;
-  const decimals = await token.decimals();
+  const { conditionStoreManager, agreementStoreManager } = nvm.keeper;
+  const decimals =
+    token !== null ? await token.decimals() : Constants.ETHDecimals;
   const priceInWei = price * 10 ** decimals;
 
   const { did, conditionIds } = await agreementStoreManager.getAgreement(
@@ -122,7 +123,7 @@ export const finalizeSalesAgreement = async (argv: any): Promise<number> => {
         [priceInWei],
         [sellerAccount.getId()],
         escrowPaymentCondition.address,
-        token.address,
+        token !== null ? token.address : Constants.ZeroAddress,
         conditionIds[0],
         conditionIds[1],
         sellerAccount.getId()

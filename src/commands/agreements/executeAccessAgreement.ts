@@ -8,7 +8,7 @@ import {
 import { ConditionState, Nevermined } from "@nevermined-io/nevermined-sdk-js";
 import chalk from "chalk";
 
-export const executeSalesAgreement = async (argv: any): Promise<number> => {
+export const executeAccessAgreement = async (argv: any): Promise<number> => {
   const { verbose, network, agreementId, seller, price, buyer } = argv;
 
   if (verbose)
@@ -31,6 +31,7 @@ export const executeSalesAgreement = async (argv: any): Promise<number> => {
 
   const decimals =
     token !== null ? await token.decimals() : Constants.ETHDecimals;
+
   const priceInWei = price * 10 ** decimals;
 
   const {
@@ -67,6 +68,7 @@ export const executeSalesAgreement = async (argv: any): Promise<number> => {
       agreementId,
       did,
       escrowPaymentCondition.address,
+      // use zero address if payments are in ETH
       token !== null ? token.address : Constants.ZeroAddress,
       [priceInWei],
       [seller],

@@ -16,8 +16,13 @@ yarn global add @nevermined-io/vitadao-cli
 export INFURA_TOKEN="<your infura token>"
 export MNEMONIC="<your 12 words seed phrase>"
 
-to switch the token address (optional):
-export TOKEN_ADDRESS="<your erc721 compatible token address>"
+to switch the NFT token address (optional):
+export NFT_TOKEN_ADDRESS="<your erc721 compatible token address>"
+
+to switch the ERC20 token address (optional):
+export ERC20_TOKEN_ADDRESS="<your erc20 compatible token address>"
+
+if set to 0x0000000000000000000000000000000000000000000000000000000000000000 the cli will assume payments in ETH
 ```
 
 ```
@@ -33,8 +38,10 @@ Commands:
   vitadao agreements create-sale did price buyer [seller]               Creates an sales offer for an NFT with the given DID
   vitadao agreements execute-sale agreementId price seller [buyer]      Pays for an NFT and stores it in the escrow
   vitadao agreements finalize-sale agreementId price buyer [seller]     Transfers the NFT and retrieves the payment from the escrow
+  vitadao agreements create-access did accessor [holder]                Creates an access agreement
+  vitadao agreements execute-access agreementId holder [accessor]       Executes an access agreement
   vitadao nfts                                                          NFTs functions
-  vitadao nfts did                                                      Retrieves information about an NFT
+  vitadao nfts show did                                                 Retrieves information about an NFT
   vitadao nfts mint to id url [minter]                                  Mint an NFT
 
 Options:

@@ -4,6 +4,7 @@ import {
   loadNftContract,
   Constants,
   findAccountOrFirst,
+  printNftTokenBanner, loadNevermined
 } from "../../utils";
 import { Nevermined } from "@nevermined-io/nevermined-sdk-js";
 import chalk from "chalk";
@@ -14,7 +15,7 @@ import { generateId } from "@nevermined-io/nevermined-sdk-js/dist/node/utils";
 const royalties = 10; // 10% of royalties in the secondary market
 const cappedAmount = 1;
 
-export const mint = async (argv: any): Promise<number> => {
+export const mintNft = async (argv: any): Promise<number> => {
   const { verbose, network, id, url, to, minter } = argv;
 
   if (verbose)
@@ -27,10 +28,9 @@ export const mint = async (argv: any): Promise<number> => {
     );
 
   const config = getConfig(network as string);
-  const nvm = await Nevermined.getInstance(config.nvm);
+  const { nvm } = await loadNevermined(config, network);
 
   if (!nvm.keeper) {
-    console.log(Constants.ErrorNetwork(network));
     return StatusCodes.FAILED_TO_CONNECT;
   }
 
@@ -47,6 +47,7 @@ export const mint = async (argv: any): Promise<number> => {
   const did = await didRegistry.hashDID(hexId, to);
 
   const nft = loadNftContract(config);
+  if (verbose) await printNftTokenBanner(nft);
 
   const contractOwner: string = await nft.methods.owner().call();
 

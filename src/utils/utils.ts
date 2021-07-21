@@ -1,22 +1,35 @@
 import { Contract } from "web3-eth-contract";
 import Web3Provider from "@nevermined-io/nevermined-sdk-js/dist/node/keeper/Web3Provider";
-import abi from "../abis/ERC721URIStorage.json";
+import ERC721 from "../abis/ERC721URIStorage.json";
 import {
   generateId,
   noZeroX,
 } from "@nevermined-io/nevermined-sdk-js/dist/node/utils";
-import { Account, Nevermined } from "@nevermined-io/nevermined-sdk-js";
+import { Account, Config, Nevermined } from "@nevermined-io/nevermined-sdk-js";
 import chalk from "chalk";
-import { StatusCodes } from "./enums";
+import { Constants, StatusCodes } from "./enums";
+import { ConfigEntry } from "./config";
+import { AbiItem } from "web3-utils";
+import Token from "@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/Token";
+import CustomToken from "./CustomToken";
 
-export const loadNftContract = (config: any): Contract => {
+const loadContract = (
+  config: Config,
+  abi: AbiItem[] | AbiItem,
+  address: string
+): Contract => {
   const web3 = Web3Provider.getWeb3(config);
-  web3.setProvider(config.nvm.web3Provider);
+  web3.setProvider(config.web3Provider);
 
   // @ts-ignore
-  const nft = new web3.eth.Contract(abi, config.nftTokenAddress);
+  const contract = new web3.eth.Contract(abi, address);
 
-  return nft;
+  return contract;
+};
+
+export const loadNftContract = (config: ConfigEntry): Contract => {
+  // @ts-ignore
+  return loadContract(config.nvm, ERC721, config.nftTokenAddress);
 };
 
 export const formatDid = (did: string): string => {
@@ -25,6 +38,7 @@ export const formatDid = (did: string): string => {
 
 export const prepareNFTSaleAgreement = async ({
   nvm,
+  token,
   nftContractAddress,
   did,
   buyer,
@@ -33,6 +47,7 @@ export const prepareNFTSaleAgreement = async ({
   price = 0,
 }: {
   nvm: Nevermined;
+  token: Token | null;
   nftContractAddress: string;
   did: string;
   buyer: string;
@@ -40,8 +55,8 @@ export const prepareNFTSaleAgreement = async ({
   agreementId?: string;
   price?: number;
 }) => {
-  const { token } = nvm.keeper;
-  const decimals = await token.decimals();
+  const decimals =
+    token !== null ? await token.decimals() : Constants.ETHDecimals;
 
   price = price * 10 ** decimals;
 
@@ -56,7 +71,7 @@ export const prepareNFTSaleAgreement = async ({
     await lockPaymentCondition.hashValues(
       did,
       escrowPaymentCondition.address,
-      token.address,
+      token !== null ? token.address : Constants.ZeroAddress,
       [price],
       [receiver]
     )
@@ -80,7 +95,7 @@ export const prepareNFTSaleAgreement = async ({
       [price],
       [receiver],
       escrowPaymentCondition.address,
-      token.address,
+      token !== null ? token.address : Constants.ZeroAddress,
       conditionIdLockPayment,
       conditionIdTransferNFT
     )
@@ -110,6 +125,47 @@ export const prepareNFTSaleAgreement = async ({
   };
 };
 
+export async function prepareNFTAccessAgreement({
+  nvm,
+  nftContractAddress,
+  did,
+  agreementId = generateId(),
+  holder,
+  accessor,
+}: {
+  nvm: Nevermined;
+  nftContractAddress: string;
+  did: string;
+  agreementId?: string;
+  holder: string;
+  accessor: string;
+}) {
+  const { nft721HolderCondition, nftAccessCondition } = nvm.keeper.conditions;
+
+  // construct agreement
+  const conditionIdNFTHolder = await nft721HolderCondition.generateId(
+    agreementId,
+    await nft721HolderCondition.hashValues(did, holder, 1, nftContractAddress)
+  );
+  const conditionIdNFTAccess = await nftAccessCondition.generateId(
+    agreementId,
+    await nftAccessCondition.hashValues(did, accessor)
+  );
+
+  const nftAccessAgreement = {
+    did: did,
+    conditionIds: [conditionIdNFTHolder, conditionIdNFTAccess],
+    timeLocks: [0, 0],
+    timeOuts: [0, 0],
+    accessConsumer: accessor,
+  };
+
+  return {
+    agreementId,
+    nftAccessAgreement,
+  };
+}
+
 export const findAccountOrFirst = (
   accounts: Account[],
   address: string
@@ -128,4 +184,71 @@ export const findAccountOrFirst = (
   }
 
   return account!;
+};
+
+export const printNftTokenBanner = async (nftContract: Contract) => {
+  const { address } = nftContract.options;
+
+  const [name, symbol, owner] = await Promise.all([
+    nftContract.methods.name().call(),
+    nftContract.methods.symbol().call(),
+    nftContract.methods.owner().call(),
+  ]);
+
+  console.log("\n");
+  console.log(chalk.dim(`===== NFT Contract =====`));
+  console.log(chalk.dim(`Address: ${chalk.whiteBright(address)}`));
+  console.log(chalk.dim(`Name: ${chalk.whiteBright(name)}`));
+  console.log(chalk.dim(`Symbol: ${chalk.whiteBright(symbol)}`));
+  console.log(chalk.dim(`Owner: ${chalk.whiteBright(owner)}`));
+  console.log("\n");
+};
+
+export const loadNevermined = async (
+  config: ConfigEntry,
+  network: string
+): Promise<{ token: Token | null; nvm: Nevermined }> => {
+  const nvm = await Nevermined.getInstance(config.nvm);
+
+  if (!nvm.keeper) {
+    console.log(
+      chalk.red(`ERROR: Nevermined could not connect to '${network}'`)
+    );
+  }
+
+  // default to no token
+  let token: Token | null = null;
+
+  if (
+    config.erc20TokenAddress.toLowerCase() ===
+    Constants.ZeroAddress.toLowerCase()
+  ) {
+    // sorry not supported now
+    console.log(chalk.red("ERROR: Assuming Payments in ETH!"));
+    throw new Error("Payments in ETH are not supported by the SDK by now!");
+  } else {
+    // if the token address is not zero try to load it
+    token = nvm.keeper.token;
+
+    if (config.erc20TokenAddress.toLowerCase() !== nvm.keeper.token.address) {
+      console.log(
+        chalk.yellow(
+          `WARNING: Using custom token at address '${config.erc20TokenAddress}'!\n`
+        )
+      );
+
+      token = await CustomToken.getInstanceByAddress(
+        {
+          nevermined: nvm,
+          web3: Web3Provider.getWeb3(config.nvm),
+        },
+        config.erc20TokenAddress
+      );
+    }
+  }
+
+  return {
+    nvm,
+    token,
+  };
 };
