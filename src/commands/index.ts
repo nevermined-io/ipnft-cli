@@ -11,3 +11,4 @@ export * from "./agreements/executeSalesAgreement";
 export * from "./agreements/finalizeSalesAgreement";
 // access agreement
 export * from "./agreements/createAccessAgreement";
+export * from "./agreements/executeAccessAgreement";

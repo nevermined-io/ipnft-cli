@@ -4,6 +4,7 @@ import ERC721 from "../abis/ERC721URIStorage.json";
 import {
   generateId,
   noZeroX,
+  zeroX,
 } from "@nevermined-io/nevermined-sdk-js/dist/node/utils";
 import { Account, Config, Nevermined } from "@nevermined-io/nevermined-sdk-js";
 import chalk from "chalk";
@@ -42,7 +43,7 @@ export const prepareNFTSaleAgreement = async ({
   nftContractAddress,
   did,
   buyer,
-  agreementId = generateId(),
+  agreementId = zeroX(generateId()),
   receiver,
   price = 0,
 }: {
@@ -129,7 +130,7 @@ export async function prepareNFTAccessAgreement({
   nvm,
   nftContractAddress,
   did,
-  agreementId = generateId(),
+  agreementId = zeroX(generateId()),
   holder,
   accessor,
 }: {
@@ -143,18 +144,18 @@ export async function prepareNFTAccessAgreement({
   const { nft721HolderCondition, nftAccessCondition } = nvm.keeper.conditions;
 
   // construct agreement
-  const conditionIdNFTHolder = await nft721HolderCondition.generateId(
+  const nftHolderConditionId = await nft721HolderCondition.generateId(
     agreementId,
     await nft721HolderCondition.hashValues(did, holder, 1, nftContractAddress)
   );
-  const conditionIdNFTAccess = await nftAccessCondition.generateId(
+  const nftAccessConditionId = await nftAccessCondition.generateId(
     agreementId,
     await nftAccessCondition.hashValues(did, accessor)
   );
 
   const nftAccessAgreement = {
     did: did,
-    conditionIds: [conditionIdNFTHolder, conditionIdNFTAccess],
+    conditionIds: [nftHolderConditionId, nftAccessConditionId],
     timeLocks: [0, 0],
     timeOuts: [0, 0],
     accessConsumer: accessor,
@@ -254,13 +255,14 @@ export const loadNevermined = async (
     // if the token address is not zero try to load it
     token = nvm.keeper.token;
 
+    // check if we have a different token configured
     if (
       config.erc20TokenAddress.toLowerCase() !==
       nvm.keeper.token.address.toLowerCase()
     ) {
       console.log(
         chalk.yellow(
-          `WARNING: Using custom token at address '${config.erc20TokenAddress}'!`
+          `WARNING: Using custom ERC20 Token at address '${config.erc20TokenAddress}'!`
         )
       );
 
@@ -271,9 +273,9 @@ export const loadNevermined = async (
         },
         config.erc20TokenAddress
       );
-
-      if (verbose) await printErc20TokenBanner(token);
     }
+
+    if (verbose) await printErc20TokenBanner(token);
   }
 
   return {

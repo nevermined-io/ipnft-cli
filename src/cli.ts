@@ -9,6 +9,7 @@ import {
   executeSalesAgreement,
   finalizeSalesAgreement,
   createAccessAgreement,
+  executeAccessAgreement,
 } from "./commands";
 import chalk from "chalk";
 
@@ -193,7 +194,7 @@ y.command(
           }
         )
         .command(
-          "execute-access agreementId holder [accessor]",
+          "execute-access agreementId accessor [holder]",
           "Executes an access agreement",
           (yargs) => {
             return yargs
@@ -201,17 +202,17 @@ y.command(
                 describe: "the agreement id address",
                 type: "string",
               })
-              .positional("holder", {
-                describe: "the holder address",
-                type: "string",
-              })
               .positional("accessor", {
                 describe: "the accessor address",
+                type: "string",
+              })
+              .positional("holder", {
+                describe: "the holder address",
                 type: "string",
               });
           },
           async (argv) => {
-            return cmdHandler(executeSalesAgreement, argv);
+            return cmdHandler(executeAccessAgreement, argv);
           }
         )
     );

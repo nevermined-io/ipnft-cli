@@ -3,12 +3,10 @@ import {
   getConfig,
   loadNftContract,
   prepareNFTSaleAgreement,
-  Constants,
   findAccountOrFirst,
   printNftTokenBanner,
   loadNevermined,
 } from "../../utils";
-import { Nevermined } from "@nevermined-io/nevermined-sdk-js";
 import chalk from "chalk";
 import { zeroX } from "@nevermined-io/nevermined-sdk-js/dist/node/utils";
 

@@ -37,7 +37,7 @@ Commands:
   vitadao agreements execute-sale agreementId price seller [buyer]      Pays for an NFT and stores it in the escrow
   vitadao agreements finalize-sale agreementId price buyer [seller]     Transfers the NFT and retrieves the payment from the escrow
   vitadao agreements create-access did accessor [holder]                Creates an access agreement
-  vitadao agreements execute-access agreementId holder [accessor]       Executes an access agreement
+  vitadao agreements execute-access agreementId accessor [holder]       Executes an access agreement
   vitadao nfts                                                          NFTs functions
   vitadao nfts show did                                                 Retrieves information about an NFT
   vitadao nfts mint to id url [minter]                                  Mint an NFT

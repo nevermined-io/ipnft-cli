@@ -2,12 +2,11 @@ import {
   StatusCodes,
   getConfig,
   loadNftContract,
-  Constants,
   findAccountOrFirst,
   prepareNFTAccessAgreement,
-  printNftTokenBanner, loadNevermined
+  printNftTokenBanner,
+  loadNevermined,
 } from "../../utils";
-import { Nevermined } from "@nevermined-io/nevermined-sdk-js";
 import chalk from "chalk";
 import { zeroX } from "@nevermined-io/nevermined-sdk-js/dist/node/utils";
 
@@ -54,13 +53,12 @@ export const createAccessAgreement = async (argv: any): Promise<number> => {
   }
 
   const { nft721AccessTemplate } = nvm.keeper.templates;
-  const { nft721HolderCondition, nftAccessCondition } = nvm.keeper.conditions;
 
   const { agreementId, nftAccessAgreement } = await prepareNFTAccessAgreement({
     nvm,
     nftContractAddress: nft.options.address,
     did,
-    holder,
+    holder: holderAccount.getId(),
     accessor,
   });
 
@@ -88,26 +86,6 @@ export const createAccessAgreement = async (argv: any): Promise<number> => {
         agreementId
       )}' created at transaction '${chalk.whiteBright(transactionHash)}'!`
     )
-  );
-
-  if (verbose) console.log(chalk.dim("Fulfilling Holder Condition"));
-
-  await nft721HolderCondition.fulfill(
-    agreementId,
-    nftAccessAgreement.did,
-    nft.options.address,
-    holderAccount.getId(),
-    1,
-    holderAccount.getId()
-  );
-
-  if (verbose) console.log(chalk.dim("Fulfilling Access Condition"));
-
-  await nftAccessCondition.fulfill(
-    agreementId,
-    nftAccessAgreement.did,
-    accessor,
-    holderAccount.getId()
   );
 
   return StatusCodes.OK;
