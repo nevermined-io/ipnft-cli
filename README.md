@@ -33,14 +33,16 @@ Commands:
   vitadao accounts list                                                 List all accounts
   vitadao accounts fund account                                         Funds an account on a test net
   vitadao agreements                                                    Agreements functions
-  vitadao agreements create-sale did price buyer [seller]               Creates an sales offer for an NFT with the given DID
-  vitadao agreements execute-sale agreementId price seller [buyer]      Pays for an NFT and stores it in the escrow
-  vitadao agreements finalize-sale agreementId price buyer [seller]     Transfers the NFT and retrieves the payment from the escrow
-  vitadao agreements create-access did accessor [holder]                Creates an access agreement
-  vitadao agreements execute-access agreementId accessor [holder]       Executes an access agreement
+  vitadao agreements list did                                           Lists all agreements for given DID
+  vitadao agreements show agreementId                                   Shows details about an agreement
   vitadao nfts                                                          NFTs functions
   vitadao nfts show did                                                 Retrieves information about an NFT
-  vitadao nfts mint to id url [minter]                                  Mint an NFT
+  vitadao nfts create [creator]                                         Creates an NFT
+  vitadao nfts mint did [minter]                                        Mints an NFT
+  vitadao nfts order did [buyer]                                        Orders an NFT by paying for it to the escrow
+  vitadao nfts transfer agreementId [seller]                            Transfers the NFT to the buyer and the funds from the escrow to the seller
+  vitadao nfts download did [consumer] [destination]                    Downloads the data of an NFT
+  vitadao nfts search [search]                                          Searches for NFTs
 
 Options:
       --help     Show help                                              [boolean]

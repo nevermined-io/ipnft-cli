@@ -1,6 +1,7 @@
 import { Config } from "@nevermined-io/nevermined-sdk-js";
 import HDWalletProvider from "@truffle/hdwallet-provider";
 import dotenv from "dotenv";
+import { LogLevel } from "@nevermined-io/nevermined-sdk-js/dist/node/utils";
 
 dotenv.config();
 
@@ -22,10 +23,12 @@ const config: CliConfig = {
       // default nvm rinkeby faucet
       faucetUri: "https://faucet.rinkeby.nevermined.rocks",
       // vita dao specific services
-      metadataUri: "https://metadata.vitadao.nevermined.rocks/",
-      gatewayUri: "https://gateway.vitadao.nevermined.rocks/",
+      metadataUri: "https://metadata.vitadao.nevermined.rocks",
+      gatewayUri: "https://gateway.vitadao.nevermined.rocks",
+      gatewayAddress: "0xF8D50e0e0F47c5dbE943AeD661cCF25c3468c44f",
       // default infura rinkeby endpoint
       nodeUri: `https://rinkeby.infura.io/v3/${process.env.INFURA_TOKEN}`,
+      verbose: LogLevel.Error,
     } as Config,
     etherscanUrl: "https://rinkeby.etherscan.io",
     nftTokenAddress:

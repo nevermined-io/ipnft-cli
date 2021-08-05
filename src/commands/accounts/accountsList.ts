@@ -31,6 +31,8 @@ export const accountsList = async (argv: any): Promise<number> => {
   const decimals =
     token !== null ? await token.decimals() : Constants.ETHDecimals;
 
+  const symbol = token !== null ? await token.symbol() : "ETH";
+
   const loadedAccounts = await Promise.all(
     accounts.map(async (a, index) => {
       const ethBalance = utils.fromWei(
@@ -91,7 +93,11 @@ export const accountsList = async (argv: any): Promise<number> => {
     console.log(chalk.dim(`ETH Balance: ${chalk.whiteBright(a.ethBalance)}`));
     if (token !== null) {
       console.log(
-        chalk.dim(`Token Balance: ${chalk.whiteBright(a.tokenBalance)}`)
+        chalk.dim(
+          `Token Balance: ${chalk.whiteBright(
+            a.tokenBalance
+          )} ${chalk.whiteBright(symbol)}`
+        )
       );
     }
     console.log(chalk.dim(`Etherscan Url: ${chalk.whiteBright(a.url)}`));

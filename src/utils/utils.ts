@@ -1,17 +1,13 @@
 import { Contract } from "web3-eth-contract";
 import Web3Provider from "@nevermined-io/nevermined-sdk-js/dist/node/keeper/Web3Provider";
-import ERC721 from "../abis/ERC721URIStorage.json";
-import {
-  generateId,
-  noZeroX,
-  zeroX,
-} from "@nevermined-io/nevermined-sdk-js/dist/node/utils";
+import { noZeroX } from "@nevermined-io/nevermined-sdk-js/dist/node/utils";
 import { Account, Config, Nevermined } from "@nevermined-io/nevermined-sdk-js";
 import chalk from "chalk";
+import Token from "@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/Token";
+import ERC721 from "../abis/ERC721URIStorage.json";
 import { Constants, StatusCodes } from "./enums";
 import { ConfigEntry } from "./config";
 import { AbiItem } from "web3-utils";
-import Token from "@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/Token";
 import CustomToken from "./CustomToken";
 
 const loadContract = (
@@ -37,136 +33,6 @@ export const formatDid = (did: string): string => {
   return `did:nv:${noZeroX(did)}`;
 };
 
-export const prepareNFTSaleAgreement = async ({
-  nvm,
-  token,
-  nftContractAddress,
-  did,
-  buyer,
-  agreementId = zeroX(generateId()),
-  receiver,
-  price = 0,
-}: {
-  nvm: Nevermined;
-  token: Token | null;
-  nftContractAddress: string;
-  did: string;
-  buyer: string;
-  receiver: string;
-  agreementId?: string;
-  price?: number;
-}) => {
-  const decimals =
-    token !== null ? await token.decimals() : Constants.ETHDecimals;
-
-  price = price * 10 ** decimals;
-
-  const {
-    escrowPaymentCondition,
-    lockPaymentCondition,
-    transferNft721Condition,
-  } = nvm.keeper.conditions;
-
-  const conditionIdLockPayment = await lockPaymentCondition.generateId(
-    agreementId,
-    await lockPaymentCondition.hashValues(
-      did,
-      escrowPaymentCondition.address,
-      token !== null ? token.address : Constants.ZeroAddress,
-      [price],
-      [receiver]
-    )
-  );
-
-  const conditionIdTransferNFT = await transferNft721Condition.generateId(
-    agreementId,
-    await transferNft721Condition.hashValues(
-      did,
-      buyer,
-      1,
-      conditionIdLockPayment,
-      nftContractAddress
-    )
-  );
-
-  const conditionIdEscrow = await escrowPaymentCondition.generateId(
-    agreementId,
-    await escrowPaymentCondition.hashValues(
-      did,
-      [price],
-      [receiver],
-      escrowPaymentCondition.address,
-      token !== null ? token.address : Constants.ZeroAddress,
-      conditionIdLockPayment,
-      conditionIdTransferNFT
-    )
-  );
-
-  const nftSalesAgreement: {
-    did: string;
-    conditionIds: string[];
-    timeLocks: number[];
-    timeOuts: number[];
-    accessConsumer: string;
-  } = {
-    did: did,
-    conditionIds: [
-      conditionIdLockPayment,
-      conditionIdTransferNFT,
-      conditionIdEscrow,
-    ],
-    timeLocks: [0, 0, 0],
-    timeOuts: [0, 0, 0],
-    accessConsumer: buyer,
-  };
-
-  return {
-    agreementId,
-    nftSalesAgreement,
-  };
-};
-
-export async function prepareNFTAccessAgreement({
-  nvm,
-  nftContractAddress,
-  did,
-  agreementId = zeroX(generateId()),
-  holder,
-  accessor,
-}: {
-  nvm: Nevermined;
-  nftContractAddress: string;
-  did: string;
-  agreementId?: string;
-  holder: string;
-  accessor: string;
-}) {
-  const { nft721HolderCondition, nftAccessCondition } = nvm.keeper.conditions;
-
-  // construct agreement
-  const nftHolderConditionId = await nft721HolderCondition.generateId(
-    agreementId,
-    await nft721HolderCondition.hashValues(did, holder, 1, nftContractAddress)
-  );
-  const nftAccessConditionId = await nftAccessCondition.generateId(
-    agreementId,
-    await nftAccessCondition.hashValues(did, accessor)
-  );
-
-  const nftAccessAgreement = {
-    did: did,
-    conditionIds: [nftHolderConditionId, nftAccessConditionId],
-    timeLocks: [0, 0],
-    timeOuts: [0, 0],
-    accessConsumer: accessor,
-  };
-
-  return {
-    agreementId,
-    nftAccessAgreement,
-  };
-}
-
 export const findAccountOrFirst = (
   accounts: Account[],
   address: string
@@ -179,7 +45,7 @@ export const findAccountOrFirst = (
     );
 
     if (!account) {
-      console.log(chalk.red(`ERROR: '${address}' is not an account!`));
+      console.log(chalk.red(`ERROR: '${address}' is not an account!\n`));
       throw new Error(`${StatusCodes[StatusCodes.ADDRESS_NOT_AN_ACCOUNT]}`);
     }
   }
@@ -193,7 +59,7 @@ export const printNftTokenBanner = async (nftContract: Contract) => {
   const [name, symbol, owner] = await Promise.all([
     nftContract.methods.name().call(),
     nftContract.methods.symbol().call(),
-    nftContract.methods.owner().call(),
+    nftContract.methods.owner().call()
   ]);
 
   console.log("\n");
@@ -212,7 +78,7 @@ export const printErc20TokenBanner = async (token: Token) => {
     token.name(),
     token.symbol(),
     token.decimals(),
-    token.totalSupply(),
+    token.totalSupply()
   ]);
 
   console.log("\n");
@@ -233,11 +99,14 @@ export const loadNevermined = async (
   network: string,
   verbose: boolean = false
 ): Promise<{ token: Token | null; nvm: Nevermined }> => {
-  const nvm = await Nevermined.getInstance(config.nvm);
+  const nvm = await Nevermined.getInstance({
+    ...config.nvm,
+    verbose: verbose ? verbose : config.nvm.verbose
+  });
 
   if (!nvm.keeper) {
     console.log(
-      chalk.red(`ERROR: Nevermined could not connect to '${network}'`)
+      chalk.red(`ERROR: Nevermined could not connect to '${network}'\n`)
     );
   }
 
@@ -249,8 +118,7 @@ export const loadNevermined = async (
     Constants.ZeroAddress.toLowerCase()
   ) {
     // sorry not supported now
-    console.log(chalk.red("ERROR: Assuming Payments in ETH!"));
-    throw new Error("Payments in ETH are not supported by the SDK by now!");
+    console.log(chalk.red("WARNING: Assuming Payments in ETH!\n"));
   } else {
     // if the token address is not zero try to load it
     token = nvm.keeper.token;
@@ -262,14 +130,14 @@ export const loadNevermined = async (
     ) {
       console.log(
         chalk.yellow(
-          `WARNING: Using custom ERC20 Token at address '${config.erc20TokenAddress}'!`
+          `WARNING: Using custom ERC20 Token at address '${config.erc20TokenAddress}'!\n`
         )
       );
 
       token = await CustomToken.getInstanceByAddress(
         {
           nevermined: nvm,
-          web3: Web3Provider.getWeb3(config.nvm),
+          web3: Web3Provider.getWeb3(config.nvm)
         },
         config.erc20TokenAddress
       );
@@ -280,6 +148,6 @@ export const loadNevermined = async (
 
   return {
     nvm,
-    token,
+    token
   };
 };
