@@ -4,7 +4,7 @@ import {
   loadNftContract,
   findAccountOrFirst,
   printNftTokenBanner,
-  loadNevermined,
+  loadNevermined
 } from "../../utils";
 import chalk from "chalk";
 import { zeroX } from "@nevermined-io/nevermined-sdk-js/dist/node/utils";
@@ -45,13 +45,17 @@ export const mintNft = async (argv: any): Promise<number> => {
   }
 
   const ddo = await nvm.assets.resolve(did);
-  const metadata = ddo.findServiceByType("metadata");
+
+  const register = (await nvm.keeper.didRegistry.getDIDRegister(
+    zeroX(ddo.shortId())
+  )) as {
+    owner: string;
+    url: string;
+  };
 
   console.log(
     chalk.dim(
-      `Minting NFT with service Endpoint! ${chalk.whiteBright(
-        metadata.serviceEndpoint
-      )}`
+      `Minting NFT with service Endpoint! ${chalk.whiteBright(register.url)}`
     )
   );
 
@@ -66,7 +70,7 @@ export const mintNft = async (argv: any): Promise<number> => {
   const to = await nvm.keeper.didRegistry.getDIDOwner(ddo.id);
 
   await nft.methods
-    .mint(to, zeroX(ddo.shortId()), metadata.serviceEndpoint)
+    .mint(to, zeroX(ddo.shortId()), register.url)
     .send({ from: minterAccount.getId() });
 
   console.log(

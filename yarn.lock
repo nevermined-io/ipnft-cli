@@ -361,16 +361,16 @@
   resolved "https://registry.yarnpkg.com/@nevermined-io/contracts/-/contracts-1.1.1.tgz#9ea079ab0ce714e1ed4b170e1d5951d16375da14"
   integrity sha512-VaAnDov/ywmdThS53ptOa6mpJC2u+9OFT5IDIcHHRRbBgHVbSD+YTX90rRe4+TnDoZMLkVWm3khJEyzlQTlSzw==
 
-"@nevermined-io/nevermined-sdk-js@^0.13.0":
-  version "0.13.0"
-  resolved "https://registry.yarnpkg.com/@nevermined-io/nevermined-sdk-js/-/nevermined-sdk-js-0.13.0.tgz#b975cfe471c5a2a4792fb19d319dd603d9cc190e"
-  integrity sha512-OfVcG3I19q0OCixtxM7BRgUHNgArYPfv/DPsaAUHKrprCJeXmtKbOjnYuFnlPmv+RPfB1jaotxy1mK2TP87Gfg==
+"@nevermined-io/nevermined-sdk-js@^0.13.1":
+  version "0.13.1"
+  resolved "https://registry.yarnpkg.com/@nevermined-io/nevermined-sdk-js/-/nevermined-sdk-js-0.13.1.tgz#8a14ad58870872f545bdf02fef7792650da26b76"
+  integrity sha512-h/ZIVSOfbMUoGE179igVoHECfV4ycdtLezJS/43dOfAEMkQtUooZpbmLF/xmBGw5KZyKAitzhv4Y1wm82OHz7A==
   dependencies:
     "@nevermined-io/contracts" "1.1.1"
     "@nevermined-io/secret-store-client" "^0.0.16"
     bignumber.js "^9.0.0"
     deprecated-decorator "^0.1.6"
-    ganache-cli "^6.9.1"
+    ganache-cli "^6.12.2"
     jose "^3.3.1"
     node-fetch "^2.6.1"
     save-file "^2.3.1"
@@ -1978,7 +1978,7 @@ functional-red-black-tree@^1.0.1:
   resolved "https://registry.yarnpkg.com/functional-red-black-tree/-/functional-red-black-tree-1.0.1.tgz#1b0ab3bd553b2a0d6399d29c0e3ea0b252078327"
   integrity sha1-GwqzvVU7Kg1jmdKcDj6gslIHgyc=
 
-ganache-cli@^6.9.1:
+ganache-cli@^6.12.2:
   version "6.12.2"
   resolved "https://registry.yarnpkg.com/ganache-cli/-/ganache-cli-6.12.2.tgz#c0920f7db0d4ac062ffe2375cb004089806f627a"
   integrity sha512-bnmwnJDBDsOWBUP8E/BExWf85TsdDEFelQSzihSJm9VChVO1SHp94YXLP5BlA4j/OTxp0wR4R1Tje9OHOuAJVw==

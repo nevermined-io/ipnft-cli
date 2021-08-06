@@ -11,6 +11,7 @@ import chalk from "chalk";
 import { MetaDataMain, File } from "@nevermined-io/nevermined-sdk-js";
 import AssetRewards from "@nevermined-io/nevermined-sdk-js/dist/node/models/AssetRewards";
 import readline from "readline";
+import { zeroX } from "@nevermined-io/nevermined-sdk-js/dist/node/utils";
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -94,13 +95,18 @@ export const createNft = async (argv: any): Promise<number> => {
     token ? token.getAddress() : config.erc20TokenAddress
   );
 
-  const metadata = ddo.findServiceByType("metadata");
+  const register = (await nvm.keeper.didRegistry.getDIDRegister(
+    zeroX(ddo.shortId())
+  )) as {
+    owner: string;
+    url: string;
+  };
 
   console.log(
     chalk.dim(
       `Created NFT '${chalk.whiteBright(ddo.id)}' for: '${chalk.whiteBright(
         url
-      )}' with service endpoint: ${chalk.whiteBright(metadata.serviceEndpoint)}`
+      )}' with service endpoint: ${chalk.whiteBright(register.url)}`
     )
   );
 

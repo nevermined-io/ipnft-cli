@@ -128,18 +128,18 @@ export const loadNevermined = async (
       config.erc20TokenAddress.toLowerCase() !==
       nvm.keeper.token.address.toLowerCase()
     ) {
-      console.log(
-        chalk.yellow(
-          `WARNING: Using custom ERC20 Token at address '${config.erc20TokenAddress}'!\n`
-        )
-      );
-
       token = await CustomToken.getInstanceByAddress(
         {
           nevermined: nvm,
           web3: Web3Provider.getWeb3(config.nvm)
         },
         config.erc20TokenAddress
+      );
+    } else {
+      console.log(
+        chalk.yellow(
+          `WARNING: Using nevermined token '${config.erc20TokenAddress}'!\n`
+        )
       );
     }
 

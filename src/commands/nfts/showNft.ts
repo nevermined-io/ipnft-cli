@@ -1,17 +1,16 @@
 import {
   StatusCodes,
   getConfig,
-  formatDid,
   loadNftContract,
   Constants,
   printNftTokenBanner,
-  loadNevermined,
+  loadNevermined
 } from "../../utils";
-import { DDO, Nevermined } from "@nevermined-io/nevermined-sdk-js";
+import { DDO } from "@nevermined-io/nevermined-sdk-js";
 import chalk from "chalk";
 import {
   getAssetRewardsFromDDOByService,
-  zeroX,
+  zeroX
 } from "@nevermined-io/nevermined-sdk-js/dist/node/utils";
 
 export const showNft = async (argv: any): Promise<number> => {
@@ -35,13 +34,13 @@ export const showNft = async (argv: any): Promise<number> => {
 
   const [contractTokenUri, contractTokenOwner] = await Promise.all([
     nft.methods.tokenURI(zeroX(ddo.shortId())).call(),
-    nft.methods.ownerOf(zeroX(ddo.shortId())).call(),
+    nft.methods.ownerOf(zeroX(ddo.shortId())).call()
   ]);
 
-  const { owner } = (await nvm.keeper.didRegistry.getDIDRegister(
+  const { url } = (await nvm.keeper.didRegistry.getDIDRegister(
     zeroX(ddo.shortId())
   )) as {
-    owner: string;
+    url: string;
   };
 
   const metadata = ddo.findServiceByType("metadata");
@@ -56,7 +55,7 @@ export const showNft = async (argv: any): Promise<number> => {
 
   console.log(chalk.dim(`====== ${chalk.whiteBright("Nevermined")} ======`));
   console.log(chalk.dim(`====== ${chalk.whiteBright(ddo.id)} ======`));
-  console.log(chalk.dim(`Url: ${chalk.whiteBright(metadata.serviceEndpoint)}`));
+  console.log(chalk.dim(`Url: ${chalk.whiteBright(url)}`));
   console.log(
     chalk.dim(`Name: ${chalk.whiteBright(metadata.attributes.main.name)}`)
   );
@@ -67,9 +66,13 @@ export const showNft = async (argv: any): Promise<number> => {
     chalk.dim(`License: ${chalk.whiteBright(metadata.attributes.main.license)}`)
   );
   console.log(
+    chalk.dim(
+      `Files: ${chalk.whiteBright(metadata.attributes.main.files?.length || 1)}`
+    )
+  );
+  console.log(
     chalk.dim(`Price: ${chalk.whiteBright(price)} ${chalk.whiteBright(symbol)}`)
   );
-  console.log(chalk.dim(`Owner: ${chalk.whiteBright(owner)}`));
 
   console.log("\n");
 

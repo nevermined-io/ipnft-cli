@@ -28,7 +28,7 @@ const config: CliConfig = {
       gatewayAddress: "0xF8D50e0e0F47c5dbE943AeD661cCF25c3468c44f",
       // default infura rinkeby endpoint
       nodeUri: `https://rinkeby.infura.io/v3/${process.env.INFURA_TOKEN}`,
-      verbose: LogLevel.Error,
+      verbose: LogLevel.Error
     } as Config,
     etherscanUrl: "https://rinkeby.etherscan.io",
     nftTokenAddress:
@@ -38,9 +38,11 @@ const config: CliConfig = {
     erc20TokenAddress:
       process.env.ERC20_TOKEN_ADDRESS ||
       // Nevermined Token
-      "0x8c8b41e349f1a0a3c2b3ed342058170f995dbb8e",
-    seed: process.env.MNEMONIC,
-  } as ConfigEntry,
+      //"0x8c8b41e349f1a0a3c2b3ed342058170f995dbb8e",
+      // WETH
+      "0xc778417E063141139Fce010982780140Aa0cD5Ab",
+    seed: process.env.MNEMONIC
+  } as ConfigEntry
 };
 
 export function getConfig(network: string): ConfigEntry {
@@ -68,7 +70,7 @@ export function getConfig(network: string): ConfigEntry {
         config[network].nvm.nodeUri,
         0,
         3
-      ),
-    },
+      )
+    }
   };
 }
