@@ -1,6 +1,6 @@
 {
   "name": "@nevermined-io/vitadao-cli",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "main": "index.js",
   "author": "Sebastian Gerske <13647606+H34D@users.noreply.github.com>",
   "license": "MIT",
@@ -12,7 +12,7 @@
     "vitadao": "./dist/index.js"
   },
   "dependencies": {
-    "@nevermined-io/nevermined-sdk-js": "^0.13.1",
+    "@nevermined-io/nevermined-sdk-js": "^0.13.2",
     "@truffle/hdwallet-provider": "^1.4.1",
     "chalk": "^4.1.1",
     "dotenv": "^10.0.0",
