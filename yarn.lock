@@ -356,17 +356,17 @@
     "@ethersproject/properties" "^5.4.0"
     "@ethersproject/strings" "^5.4.0"
 
-"@nevermined-io/contracts@1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@nevermined-io/contracts/-/contracts-1.1.1.tgz#9ea079ab0ce714e1ed4b170e1d5951d16375da14"
-  integrity sha512-VaAnDov/ywmdThS53ptOa6mpJC2u+9OFT5IDIcHHRRbBgHVbSD+YTX90rRe4+TnDoZMLkVWm3khJEyzlQTlSzw==
+"@nevermined-io/contracts@^1.1.4":
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/@nevermined-io/contracts/-/contracts-1.1.4.tgz#b89159cc0ce3103629002d4368e7d9887a5d1509"
+  integrity sha512-YWDZ8FnoxGd6ngxa5RQMN8eVqNVTTGciHKo0q2YKkzjgwsw8ELpZBJfrM6/1cAHK9655HVGCMhhpC1U6mFVgGg==
 
-"@nevermined-io/nevermined-sdk-js@^0.13.1":
-  version "0.13.1"
-  resolved "https://registry.yarnpkg.com/@nevermined-io/nevermined-sdk-js/-/nevermined-sdk-js-0.13.1.tgz#8a14ad58870872f545bdf02fef7792650da26b76"
-  integrity sha512-h/ZIVSOfbMUoGE179igVoHECfV4ycdtLezJS/43dOfAEMkQtUooZpbmLF/xmBGw5KZyKAitzhv4Y1wm82OHz7A==
+"@nevermined-io/nevermined-sdk-js@^0.13.3":
+  version "0.13.3"
+  resolved "https://registry.yarnpkg.com/@nevermined-io/nevermined-sdk-js/-/nevermined-sdk-js-0.13.3.tgz#c7a5244d4c2dcdccc21216176836380b1b6b1dab"
+  integrity sha512-QjrCOvUir9Mw2euDW0Kh+FWT9DFKVkPhB+sDrBIAMw8XQvIxfpKLTI96FNi4dM+Ix8wjqoYHguuFdzFQDuIVpA==
   dependencies:
-    "@nevermined-io/contracts" "1.1.1"
+    "@nevermined-io/contracts" "^1.1.4"
     "@nevermined-io/secret-store-client" "^0.0.16"
     bignumber.js "^9.0.0"
     deprecated-decorator "^0.1.6"
