@@ -3,7 +3,7 @@
 ### Installation
 
 ```
-npm install -g @nevermined-io/vitadao-cli 
+npm install -g @nevermined-io/vitadao-cli
 
 or
 
@@ -12,9 +12,31 @@ yarn global add @nevermined-io/vitadao-cli
 
 ### Usage
 
+**Setup Accounts**:
+
+- Option 1: Use a mnemonic
+
+```
+export MNEMONIC="<your 12 words seed phrase>"
+```
+
+- Option 2: Use keyfiles
+
+```
+export CREATOR_KEYFILE="<path to keyfile>"
+export CREATOR_PASSWORD="<keyfile password>"
+
+export BUYER_KEYFILE="<path to keyfile>"
+export BUYER_PASSWORD="<keyfile password>"
+
+export MINTER_KEYFILE="<path to keyfile>"
+export MINTER_PASSWORD="<keyfile password>"
+```
+
+---
+
 ```
 export INFURA_TOKEN="<your infura token>"
-export MNEMONIC="<your 12 words seed phrase>"
 
 to switch the NFT token address (optional):
 export NFT_TOKEN_ADDRESS="<your erc721 compatible token address>"
