@@ -147,13 +147,18 @@ y.command(
         }
       )
       .command(
-        "create [creator]",
+        "create [creator] [metadata]",
         "Creates an NFT",
         yargs => {
-          return yargs.positional("creator", {
-            describe: "the address of the author of the NFT",
-            type: "string"
-          });
+          return yargs
+            .positional("creator", {
+              describe: "the address of the author of the NFT",
+              type: "string"
+            })
+            .positional("metadata", {
+              describe: "the json file with the metadata",
+              type: "string"
+            });
         },
         async argv => {
           return cmdHandler(createNft, argv);
