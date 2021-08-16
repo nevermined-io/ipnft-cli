@@ -1,7 +1,7 @@
 import { Config } from "@nevermined-io/nevermined-sdk-js";
 import HDWalletProvider from "@truffle/hdwallet-provider";
 import dotenv from "dotenv";
-import { findServiceConditionByName, LogLevel } from "@nevermined-io/nevermined-sdk-js/dist/node/utils";
+import { LogLevel } from "@nevermined-io/nevermined-sdk-js/dist/node/utils";
 import Web3 from 'web3'
 import fs from 'fs'
 
@@ -39,6 +39,37 @@ const config: CliConfig = {
       verbose: LogLevel.Error
     } as Config,
     etherscanUrl: "https://rinkeby.etherscan.io",
+    nftTokenAddress:
+      process.env.NFT_TOKEN_ADDRESS ||
+      // IPNFT Contract from Vita DAO
+      "0xa25fd714136E2128e38fB434DBfE344276071CD0",
+    erc20TokenAddress:
+      process.env.ERC20_TOKEN_ADDRESS ||
+      // Nevermined Token
+      //"0x8c8b41e349f1a0a3c2b3ed342058170f995dbb8e",
+      // WETH
+      "0xc778417E063141139Fce010982780140Aa0cD5Ab",
+    seed: process.env.MNEMONIC,
+    buyerKeyfile: process.env.BUYER_KEYFILE,
+    buyerPassword: process.env.BUYER_PASSWORD,
+    creatorKeyfile: process.env.CREATOR_KEYFILE,
+    creatorPassword: process.env.CREATOR_PASSWORD,
+    minterKeyfile: process.env.MINTER_KEYFILE,
+    minterPassword: process.env.MINTER_PASSWORD
+  } as ConfigEntry,
+  mainnet: {
+    nvm: {
+      // default nvm rinkeby faucet
+      faucetUri: "https://faucet.rinkeby.nevermined-mainnet.rocks",
+      // vita dao specific services
+      metadataUri: "https://metadata.vitadao-mainnet.nevermined.rocks",
+      gatewayUri: "https://gateway.vitadao-mainnet.nevermined.rocks",
+      gatewayAddress: "0xF8D50e0e0F47c5dbE943AeD661cCF25c3468c44f",
+      // default infura rinkeby endpoint
+      nodeUri: `https://mainnet.infura.io/v3/${process.env.INFURA_TOKEN}`,
+      verbose: LogLevel.Error
+    } as Config,
+    etherscanUrl: "https://etherscan.io",
     nftTokenAddress:
       process.env.NFT_TOKEN_ADDRESS ||
       // IPNFT Contract from Vita DAO

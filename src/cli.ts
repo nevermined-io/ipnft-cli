@@ -33,7 +33,7 @@ const y = yargs(hideBin(process.argv))
   .option("network", {
     alias: "n",
     type: "string",
-    default: "rinkeby",
+    default: "mainnet",
     description: "the network to use"
   });
 
