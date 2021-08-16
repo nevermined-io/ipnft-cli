@@ -12,6 +12,7 @@ import { MetaDataMain, File } from "@nevermined-io/nevermined-sdk-js";
 import AssetRewards from "@nevermined-io/nevermined-sdk-js/dist/node/models/AssetRewards";
 import readline from "readline";
 import { zeroX } from "@nevermined-io/nevermined-sdk-js/dist/node/utils";
+import fs from 'fs';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -19,7 +20,7 @@ const rl = readline.createInterface({
 });
 
 export const createNft = async (argv: any): Promise<number> => {
-  const { verbose, network, creator } = argv;
+  const { verbose, network, creator, metadata } = argv;
 
   console.log(chalk.dim(`Creating NFT ...`));
 
@@ -39,58 +40,72 @@ export const createNft = async (argv: any): Promise<number> => {
   if (verbose)
     console.log(chalk.dim(`Using creator: '${creatorAccount.getId()}'\n`));
 
-  const authorInput = await new Promise(resolve =>
-    rl.question("Author Name: ", author => {
-      resolve(author);
-    })
-  );
+  let ddoMetadata;
+  let ddoPrice: Number;
+  if (!metadata) {
+    const authorInput = await new Promise(resolve =>
+      rl.question("Author Name: ", author => {
+        resolve(author);
+      })
+    );
 
-  const name = await new Promise(resolve =>
-    rl.question("Asset Name: ", name => {
-      resolve(name);
-    })
-  );
+    const name = await new Promise(resolve =>
+      rl.question("Asset Name: ", name => {
+        resolve(name);
+      })
+    );
 
-  const url = await new Promise(resolve =>
-    rl.question("URL to the Asset: ", url => {
-      resolve(url);
-    })
-  );
+    const url = await new Promise(resolve =>
+      rl.question("URL to the Asset: ", url => {
+        resolve(url);
+      })
+    );
 
-  const price: number = await new Promise(resolve =>
-    rl.question("Price of the Asset: ", price => {
-      resolve(Number(price));
-    })
-  );
+    const price: number = await new Promise(resolve =>
+      rl.question("Price of the Asset: ", price => {
+        resolve(Number(price));
+      })
+    );
 
-  const license = await new Promise(resolve =>
-    rl.question("License of the Asset: ", license => {
-      resolve(license);
-    })
-  );
+    const license = await new Promise(resolve =>
+      rl.question("License of the Asset: ", license => {
+        resolve(license);
+      })
+    );
 
-  const decimals =
-    token !== null ? await token.decimals() : Constants.ETHDecimals;
+    const decimals =
+      token !== null ? await token.decimals() : Constants.ETHDecimals;
 
-  console.log(chalk.dim("\nCreating Asset ..."));
+    ddoPrice = (price * 10 ** decimals);
 
-  const ddo = await nvm.nfts.create721(
-    {
+    ddoMetadata = {
       main: {
         name,
         type: "dataset",
         dateCreated: new Date().toISOString().replace(/\.[0-9]{3}/, ""),
         author: authorInput,
         license,
+        price: ddoPrice.toString(),
         files: [
           {
             url
           } as File
         ]
       } as MetaDataMain
-    },
+    }
+  } else {
+      ddoMetadata = JSON.parse(fs.readFileSync(metadata).toString())
+      ddoPrice = Number(ddoMetadata.main.price);
+  }
+
+  console.log(chalk.dim("\nCreating Asset ..."));
+  console.log(JSON.stringify(ddoMetadata))
+
+  const ddo = await nvm.nfts.create721(
+    ddoMetadata,
     creatorAccount,
-    new AssetRewards(creatorAccount.getId(), price * 10 ** decimals),
+    // @ts-ignore
+    new AssetRewards(creatorAccount.getId(), ddoPrice),
     config.nftTokenAddress,
     token ? token.getAddress() : config.erc20TokenAddress
   );
@@ -104,9 +119,7 @@ export const createNft = async (argv: any): Promise<number> => {
 
   console.log(
     chalk.dim(
-      `Created NFT '${chalk.whiteBright(ddo.id)}' for: '${chalk.whiteBright(
-        url
-      )}' with service endpoint: ${chalk.whiteBright(register.url)}`
+      `Created NFT '${chalk.whiteBright(ddo.id)} with service endpoint: ${chalk.whiteBright(register.url)}`
     )
   );
 
