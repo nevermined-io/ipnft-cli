@@ -165,7 +165,7 @@ y.command(
         }
       )
       .command(
-        "mint did [minter]",
+        "mint did [minter] [uri]",
         "Mints an NFT",
         yargs => {
           return yargs
@@ -176,7 +176,11 @@ y.command(
             .positional("minter", {
               describe: "the address of the minter of the NFT",
               type: "string"
-            });
+            })
+            .positional("uri", {
+              describe: "the token uri for the Asset Metadata",
+              type: "string"
+            })
         },
         async argv => {
           return cmdHandler(mintNft, argv);

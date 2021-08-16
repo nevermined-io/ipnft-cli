@@ -10,7 +10,7 @@ import chalk from "chalk";
 import { zeroX } from "@nevermined-io/nevermined-sdk-js/dist/node/utils";
 
 export const mintNft = async (argv: any): Promise<number> => {
-  const { verbose, network, did, minter } = argv;
+  const { verbose, network, did, minter, uri } = argv;
 
   console.log(chalk.dim(`Minting NFT: '${chalk.whiteBright(did)}'`));
 
@@ -70,7 +70,7 @@ export const mintNft = async (argv: any): Promise<number> => {
   const to = await nvm.keeper.didRegistry.getDIDOwner(ddo.id);
 
   await nft.methods
-    .mint(to, zeroX(ddo.shortId()), register.url)
+    .mint(to, zeroX(ddo.shortId()), uri || register.url)
     .send({ from: minterAccount.getId() });
 
   console.log(
