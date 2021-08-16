@@ -99,7 +99,6 @@ export const createNft = async (argv: any): Promise<number> => {
   }
 
   console.log(chalk.dim("\nCreating Asset ..."));
-  console.log(JSON.stringify(ddoMetadata))
 
   const ddo = await nvm.nfts.create721(
     ddoMetadata,
