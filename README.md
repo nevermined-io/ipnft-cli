@@ -59,8 +59,8 @@ Commands:
   vitadao agreements show agreementId                                   Shows details about an agreement
   vitadao nfts                                                          NFTs functions
   vitadao nfts show did                                                 Retrieves information about an NFT
-  vitadao nfts create [creator]                                         Creates an NFT
-  vitadao nfts mint did [minter]                                        Mints an NFT
+  vitadao nfts create [creator] [metadata]                              Creates an NFT
+  vitadao nfts mint did [minter] [uri]                                  Mints an NFT
   vitadao nfts order did [buyer]                                        Orders an NFT by paying for it to the escrow
   vitadao nfts transfer agreementId [seller]                            Transfers the NFT to the buyer and the funds from the escrow to the seller
   vitadao nfts download did [consumer] [destination]                    Downloads the data of an NFT
@@ -70,5 +70,5 @@ Options:
       --help     Show help                                              [boolean]
       --version  Show version number                                    [boolean]
   -v, --verbose  Run with verbose logging                               [boolean]
-  -n, --network  the network to use                 [string] [default: "rinkeby"]
+  -n, --network  the network to use                 [string] [default: "mainnet"]
 ```
