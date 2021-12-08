@@ -26,6 +26,34 @@ export interface ConfigEntry {
 }
 
 const config: CliConfig = {
+  local: {
+    nvm: {
+      faucetUri: "http://localhost:8545",
+      // vita dao specific services
+      metadataUri: "http://localhost:8030",
+      gatewayUri: "http://localhost:8030",
+      gatewayAddress: "0xF8D50e0e0F47c5dbE943AeD661cCF25c3468c44f",
+      // default infura rinkeby endpoint
+      nodeUri: `http://localhost:8545`,
+      verbose: LogLevel.Error
+    } as Config,
+    etherscanUrl: "https://rinkeby.etherscan.io",
+    nftTokenAddress:
+      process.env.NFT_TOKEN_ADDRESS ||
+      // IPNFT Contract from Vita DAO
+      "0x884AAAAf48D4A7B4Dc4CB9B2cf47a150b3d535A6",
+    erc20TokenAddress:
+      process.env.ERC20_TOKEN_ADDRESS ||
+      // Nevermined Token
+      "0x02175de5A7F168517688e3E93f55936C9c2C7A19",
+    seed: process.env.MNEMONIC,
+    buyerKeyfile: process.env.BUYER_KEYFILE,
+    buyerPassword: process.env.BUYER_PASSWORD,
+    creatorKeyfile: process.env.CREATOR_KEYFILE,
+    creatorPassword: process.env.CREATOR_PASSWORD,
+    minterKeyfile: process.env.MINTER_KEYFILE,
+    minterPassword: process.env.MINTER_PASSWORD
+  } as ConfigEntry,
   rinkeby: {
     nvm: {
       // default nvm rinkeby faucet
@@ -94,11 +122,12 @@ export function getConfig(network: string): ConfigEntry {
   if (!config[network])
     throw new Error(`Network '${network}' is not supported`);
 
+  /*
   if (!process.env.INFURA_TOKEN) {
     throw new Error(
       "ERROR: 'INFURA_TOKEN' not set in environment! Please see README.md for details."
     );
-  }
+  }*/
 
   if (!process.env.MNEMONIC) {
     if (

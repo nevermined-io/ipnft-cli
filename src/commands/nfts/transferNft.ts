@@ -9,7 +9,7 @@ import chalk from "chalk";
 import { getAssetRewardsFromDDOByService } from "@nevermined-io/nevermined-sdk-js/dist/node/utils";
 
 export const transferNft = async (argv: any): Promise<number> => {
-  const { verbose, network, agreementId, seller } = argv;
+  const { verbose, network, agreementId, seller, gasMultiplier } = argv;
 
   if (verbose)
     console.log(
@@ -58,7 +58,8 @@ export const transferNft = async (argv: any): Promise<number> => {
   await nvm.nfts.transfer721(
     agreementId,
     ddo.id,
-    sellerAccount
+    sellerAccount,
+    {gasMultiplier}
   );
 
   console.log(chalk.dim("Releasing rewards ..."));

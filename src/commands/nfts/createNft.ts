@@ -20,7 +20,7 @@ const rl = readline.createInterface({
 });
 
 export const createNft = async (argv: any): Promise<number> => {
-  const { verbose, network, creator, metadata } = argv;
+  const { verbose, network, creator, metadata, gasMultiplier } = argv;
 
   console.log(chalk.dim(`Creating NFT ...`));
 
@@ -106,7 +106,9 @@ export const createNft = async (argv: any): Promise<number> => {
     // @ts-ignore
     new AssetRewards(creatorAccount.getId(), ddoPrice),
     config.nftTokenAddress,
-    token ? token.getAddress() : config.erc20TokenAddress
+    token ? token.getAddress() : config.erc20TokenAddress,
+    undefined,
+    {gasMultiplier}
   );
 
   const register = (await nvm.keeper.didRegistry.getDIDRegister(
