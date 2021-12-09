@@ -9,6 +9,7 @@ import { Constants, StatusCodes } from "./enums";
 import { ConfigEntry } from "./config";
 import { AbiItem } from "web3-utils";
 import CustomToken from "./CustomToken";
+import { TxParameters } from "@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/ContractBase";
 
 const loadContract = (
   config: Config,
@@ -93,6 +94,18 @@ export const printErc20TokenBanner = async (token: Token) => {
     )
   );
 };
+
+export const getTxParams = (argv: any) : TxParameters => {
+  let { gasMultiplier, gas, verbose } = argv;
+  let printProgress = (a:any) => {
+    console.log(a)
+  }
+  return {
+    gasMultiplier,
+    progress: verbose ? printProgress : undefined,
+    gas
+  } 
+}
 
 export const loadNevermined = async (
   config: ConfigEntry,

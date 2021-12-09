@@ -4,12 +4,13 @@ import {
   findAccountOrFirst,
   loadNevermined,
   Constants,
+  getTxParams,
 } from "../../utils";
 import chalk from "chalk";
 import { getAssetRewardsFromDDOByService } from "@nevermined-io/nevermined-sdk-js/dist/node/utils";
 
 export const transferNft = async (argv: any): Promise<number> => {
-  const { verbose, network, agreementId, seller, gasMultiplier, gas } = argv;
+  const { verbose, network, agreementId, seller } = argv;
 
   if (verbose)
     console.log(
@@ -54,16 +55,18 @@ export const transferNft = async (argv: any): Promise<number> => {
     chalk.dim(`Price ${chalk.whiteBright(price)} ${chalk.whiteBright(symbol)}`)
   );
 
+  const txParams = getTxParams(argv)
+
   console.log(chalk.dim(`Transferring NFT '${chalk.whiteBright(ddo.id)}' ...`));
   await nvm.nfts.transfer721(
     agreementId,
     ddo.id,
     sellerAccount,
-    {gasMultiplier, gas}
+    txParams
   );
 
   console.log(chalk.dim("Releasing rewards ..."));
-  await nvm.nfts.release721Rewards(agreementId, ddo.id, sellerAccount, {gasMultiplier, gas});
+  await nvm.nfts.release721Rewards(agreementId, ddo.id, sellerAccount, txParams);
 
   console.log(chalk.dim("Transfer done!"));
   return StatusCodes.OK;

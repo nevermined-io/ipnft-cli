@@ -5,6 +5,7 @@ import {
   findAccountOrFirst,
   printNftTokenBanner,
   loadNevermined,
+  getTxParams,
   Constants
 } from "../../utils";
 import chalk from "chalk";
@@ -20,7 +21,7 @@ const rl = readline.createInterface({
 });
 
 export const createNft = async (argv: any): Promise<number> => {
-  const { verbose, network, creator, metadata, gasMultiplier, gas } = argv;
+  const { verbose, network, creator, metadata } = argv;
 
   console.log(chalk.dim(`Creating NFT ...`));
 
@@ -108,7 +109,7 @@ export const createNft = async (argv: any): Promise<number> => {
     config.nftTokenAddress,
     token ? token.getAddress() : config.erc20TokenAddress,
     undefined,
-    {gasMultiplier, gas}
+    getTxParams(argv)
   );
 
   const register = (await nvm.keeper.didRegistry.getDIDRegister(

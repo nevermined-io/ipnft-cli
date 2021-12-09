@@ -4,13 +4,14 @@ import {
   loadNftContract,
   findAccountOrFirst,
   printNftTokenBanner,
-  loadNevermined
+  loadNevermined,
+  getTxParams
 } from "../../utils";
 import chalk from "chalk";
 import { zeroX } from "@nevermined-io/nevermined-sdk-js/dist/node/utils";
 
 export const mintNft = async (argv: any): Promise<number> => {
-  const { verbose, network, did, minter, uri, gasMultiplier, gas } = argv;
+  const { verbose, network, did, minter, uri } = argv;
 
   console.log(chalk.dim(`Minting NFT: '${chalk.whiteBright(did)}'`));
 
@@ -71,7 +72,7 @@ export const mintNft = async (argv: any): Promise<number> => {
 
   const to = await nvm.keeper.didRegistry.getDIDOwner(ddo.id);
 
-  await nftContract.mintWithURL(to, zeroX(ddo.shortId()), uri || register.url, minterAccount, {gasMultiplier, gas})
+  await nftContract.mintWithURL(to, zeroX(ddo.shortId()), uri || register.url, minterAccount, getTxParams(argv))
   console.log(
     chalk.dim(
       `Minted NFT '${chalk.whiteBright(ddo.id)}' to '${chalk.whiteBright(to)}'!`

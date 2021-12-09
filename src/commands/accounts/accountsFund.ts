@@ -1,9 +1,8 @@
-import { getConfig, loadNevermined, StatusCodes } from "../../utils";
+import { getConfig, getTxParams, loadNevermined, StatusCodes } from "../../utils";
 import chalk from "chalk";
 
 export const accountsFund = async (argv: any): Promise<number> => {
-  console.log(argv)
-  const { verbose, network, account, gasMultiplier, gas } = argv;
+  const { verbose, network, account } = argv;
 
   if (verbose)
     console.log(chalk.dim(`Funding account: '${chalk.whiteBright(account)}'`));
@@ -29,7 +28,7 @@ export const accountsFund = async (argv: any): Promise<number> => {
   }
 
   try {
-    await nvm.keeper.dispenser.requestTokens(100, account, {gasMultiplier, gas});
+    await nvm.keeper.dispenser.requestTokens(100, account, getTxParams(argv));
     console.log(chalk.dim(`Funded Tokens to ${chalk.whiteBright(account)}`));
   } catch (err: any) {
     console.log(
