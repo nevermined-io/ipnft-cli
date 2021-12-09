@@ -14,7 +14,7 @@ import {
 } from "@nevermined-io/nevermined-sdk-js/dist/node/utils";
 
 export const orderNft = async (argv: any): Promise<number> => {
-  const { verbose, network, did, buyer, gasMultiplier } = argv;
+  const { verbose, network, did, buyer, gasMultiplier, gas } = argv;
 
   console.log(chalk.dim(`Ordering DID: '${chalk.whiteBright(did)}'!`));
 
@@ -52,7 +52,7 @@ export const orderNft = async (argv: any): Promise<number> => {
     chalk.dim(`Price: ${chalk.whiteBright(price)} ${chalk.whiteBright(symbol)}`)
   );
 
-  const agreementId = await nvm.nfts.order721(did, buyerAccount, {gasMultiplier});
+  const agreementId = await nvm.nfts.order721(did, buyerAccount, {gasMultiplier, gas});
 
   console.log(
     chalk.dim(

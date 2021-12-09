@@ -3,7 +3,7 @@ import chalk from "chalk";
 
 export const accountsFund = async (argv: any): Promise<number> => {
   console.log(argv)
-  const { verbose, network, account, gasMultiplier } = argv;
+  const { verbose, network, account, gasMultiplier, gas } = argv;
 
   if (verbose)
     console.log(chalk.dim(`Funding account: '${chalk.whiteBright(account)}'`));
@@ -18,7 +18,7 @@ export const accountsFund = async (argv: any): Promise<number> => {
   try {
     await nvm.faucet.requestEth(account);
     console.log(chalk.dim(`Funded ETH to ${chalk.whiteBright(account)}`));
-  } catch (err) {
+  } catch (err: any) {
     console.log(
       chalk.red(
         `Funding ETH to ${chalk.whiteBright(account)} failed! ${err.message}`
@@ -29,9 +29,9 @@ export const accountsFund = async (argv: any): Promise<number> => {
   }
 
   try {
-    await nvm.keeper.dispenser.requestTokens(100, account, {gasMultiplier});
+    await nvm.keeper.dispenser.requestTokens(100, account, {gasMultiplier, gas});
     console.log(chalk.dim(`Funded Tokens to ${chalk.whiteBright(account)}`));
-  } catch (err) {
+  } catch (err: any) {
     console.log(
       chalk.red(
         `Funding Tokens to ${chalk.whiteBright(account)} failed! ${err.message}`

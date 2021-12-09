@@ -1,0 +1,57 @@
+{
+  "main": {
+    "name": "UK Weather information 2011",
+    "type": "dataset",
+    "dateCreated": "2012-10-10T17:00:00Z",
+    "author": "Met Office",
+    "license": "CC-BY",
+    "price": 10,
+    "files": [
+      {
+        "index": 0,
+        "url": "https://testocnfiles.blob.core.windows.net/testfiles/testzkp.zip",
+        "checksum": "085340abffh21495345af97c6b0e761",
+        "contentLength": "12324"
+      },
+      {
+        "url": "https://testocnfiles.blob.core.windows.net/testfiles/testzkp2.zip"
+      }
+    ]
+  },
+  "curation": {
+    "rating": 0.93,
+    "numVotes": 123,
+    "schema": "Binary Voting"
+  },
+  "additionalInformation": {
+    "description": "Weather information of UK including temperature and humidity",
+    "copyrightHolder": "Met Office",
+    "workExample": "423432fsd,51.509865,-0.118092,2011-01-01T10:55:11+00:00,7.2,68",
+    "links": [
+      {
+        "name": "Sample of Asset Data",
+        "type": "sample",
+        "url": "https://foo.com/sample.csv"
+      },
+      {
+        "name": "Data Format Definition",
+        "type": "format",
+        "AssetID": "4d517500da0acb0d65a716f61330969334630363ce4a6a9d39691026ac7908ea"
+      }
+    ],
+    "inLanguage": "en",
+    "categories": ["Economy", "Data Science"],
+    "tags": ["weather", "uk", "2011", "temperature", "humidity"],
+    "updateFrequency": "yearly",
+    "structuredMarkup": [
+      {
+        "uri": "http://skos.um.es/unescothes/C01194/jsonld",
+        "mediaType": "application/ld+json"
+      },
+      {
+        "uri": "http://skos.um.es/unescothes/C01194/turtle",
+        "mediaType": "text/turtle"
+      }
+    ]
+  }
+}

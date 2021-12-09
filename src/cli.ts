@@ -31,9 +31,14 @@ const y = yargs(hideBin(process.argv))
     description: "Run with verbose logging"
   })
   .option("gas-multiplier", {
-    alias: "g",
+    alias: "m",
     type: "number",
     description: "Gas multiplier for transactions"
+  })
+  .option("gas", {
+    alias: "g",
+    type: "number",
+    description: "Gas limit for transactions"
   })
   .option("network", {
     alias: "n",
