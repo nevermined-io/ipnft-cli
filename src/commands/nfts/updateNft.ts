@@ -4,17 +4,12 @@ import {
   loadNftContract,
   findAccountOrFirst,
   printNftTokenBanner,
-  loadNevermined,
-  getTxParams,
-  Constants
+  loadNevermined
 } from "../../utils";
 import chalk from "chalk";
-import { MetaDataMain, File } from "@nevermined-io/nevermined-sdk-js";
-import AssetRewards from "@nevermined-io/nevermined-sdk-js/dist/node/models/AssetRewards";
+import { File } from "@nevermined-io/nevermined-sdk-js";
 import readline from "readline";
-import { zeroX } from "@nevermined-io/nevermined-sdk-js/dist/node/utils";
 import fs from 'fs';
-import path from 'path';
 import AWS from 'aws-sdk';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -30,7 +25,7 @@ export const updateNft = async (argv: any): Promise<number> => {
   console.log(chalk.dim(`Updating NFT data ...`));
 
   const config = getConfig(network as string);
-  const { nvm, token } = await loadNevermined(config, network, verbose);
+  const { nvm } = await loadNevermined(config, network, verbose);
 
   if (!nvm.keeper) {
     return StatusCodes.FAILED_TO_CONNECT;
@@ -109,77 +104,6 @@ export const updateNft = async (argv: any): Promise<number> => {
   metadata.main.files = [{contentType: '', index: 0} as File]
   ddo.created = new Date().toISOString().replace(/\.[0-9]{3}/, "")
   await nvm.metadata.updateDDO(did, ddo)
-
-  // ddo.updateService(nvm, metadata)
-
-  /*
-  let res = await s3.putObject(params).promise()
-  console.log(res)
-  */
-
-
-
-
-  /*
-  let ddoMetadata;
-  let ddoPrice: Number;
-  if (!metadata) {
-    const authorInput = await new Promise(resolve =>
-      rl.question("Author Name: ", author => {
-        resolve(author);
-      })
-    );
-
-    const name = await new Promise(resolve =>
-      rl.question("Asset Name: ", name => {
-        resolve(name);
-      })
-    );
-
-    const url = await new Promise(resolve =>
-      rl.question("URL to the Asset: ", url => {
-        resolve(url);
-      })
-    );
-
-    const price: number = await new Promise(resolve =>
-      rl.question("Price of the Asset: ", price => {
-        resolve(Number(price));
-      })
-    );
-
-    const license = await new Promise(resolve =>
-      rl.question("License of the Asset: ", license => {
-        resolve(license);
-      })
-    );
-
-    const decimals =
-      token !== null ? await token.decimals() : Constants.ETHDecimals;
-
-    ddoPrice = (price * 10 ** decimals);
-
-    ddoMetadata = {
-      main: {
-        name,
-        type: "dataset",
-        dateCreated: new Date().toISOString().replace(/\.[0-9]{3}/, ""),
-        author: authorInput,
-        license,
-        price: ddoPrice.toString(),
-        files: [
-          {
-            url
-          } as File
-        ]
-      } as MetaDataMain
-    }
-  } else {
-      ddoMetadata = JSON.parse(fs.readFileSync(metadata).toString())
-      ddoPrice = Number(ddoMetadata.main.price);
-  }
-
-  */
 
   return StatusCodes.OK;
 };
