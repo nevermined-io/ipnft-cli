@@ -11,6 +11,7 @@ import {
   createNft,
   listAgreements,
   downloadNft,
+  updateNft,
   searchNft
 } from "./commands";
 import chalk from "chalk";
@@ -252,6 +253,24 @@ y.command(
         },
         async argv => {
           return cmdHandler(downloadNft, argv);
+        }
+      )
+      .command(
+        "update did [file]",
+        "Uploads the data of an NFT",
+        yargs => {
+          return yargs
+            .positional("did", {
+              describe: "the agreement id address",
+              type: "string"
+            })
+            .positional("file", {
+              describe: "the destination of the files",
+              type: "string"
+            });
+        },
+        async argv => {
+          return cmdHandler(updateNft, argv);
         }
       )
       .command(

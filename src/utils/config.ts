@@ -29,11 +29,9 @@ const config: CliConfig = {
   local: {
     nvm: {
       faucetUri: "http://localhost:8545",
-      // vita dao specific services
       metadataUri: "http://localhost:5000",
       gatewayUri: "http://localhost:8030",
       gatewayAddress: "0xF8D50e0e0F47c5dbE943AeD661cCF25c3468c44f",
-      // default infura rinkeby endpoint
       nodeUri: `http://localhost:8545`,
       verbose: LogLevel.Error
     } as Config,
