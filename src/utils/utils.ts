@@ -10,6 +10,7 @@ import { ConfigEntry } from "./config";
 import { AbiItem } from "web3-utils";
 import CustomToken from "./CustomToken";
 import { TxParameters } from "@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/ContractBase";
+import axios from 'axios';
 
 const loadContract = (
   config: Config,
@@ -96,13 +97,28 @@ export const printErc20TokenBanner = async (token: Token) => {
 };
 
 export const getTxParams = (argv: any) : TxParameters => {
-  let { gasMultiplier, gas, verbose } = argv;
+  let apikey = process.env['ETHERSCANAPIKEY']
+  let { gasMultiplier, gas, verbose, gasPrice } = argv;
+  let shortProgress = async (a:any) => {
+    if (a.stage === 'sent') {
+      console.log(`Sending TX ${a.contractName}.${a.method} with ${a.gas} gas`)
+    } else if (a.stage === 'txHash') {
+      console.log(`Got TX hash for ${a.contractName}.${a.method}: ${a.txHash}`)
+      let res = await axios.get(
+        `https://api.etherscan.io/api?module=gastracker&action=gasestimate&gasprice=${a.gasPrice}&apikey=${apikey}`,
+      )
+      console.log(`Estimated confirmation time: ${res.data.result} seconds`)
+    } else if (a.stage === 'receipt') {
+      console.log(`Got TX receipt for ${a.contractName}.${a.method} with hash ${a.receipt.transactionHash}`)
+    }
+  }
   let printProgress = (a:any) => {
     console.log(a)
   }
   return {
     gasMultiplier,
-    progress: verbose ? printProgress : undefined,
+    gasPrice,
+    progress: verbose ? printProgress : shortProgress,
     gas
   } 
 }
