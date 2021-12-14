@@ -14,7 +14,10 @@ import AssetRewards from "@nevermined-io/nevermined-sdk-js/dist/node/models/Asse
 import readline from "readline";
 import { zeroX } from "@nevermined-io/nevermined-sdk-js/dist/node/utils";
 import fs from 'fs';
+import path from 'path';
 import AWS from 'aws-sdk';
+import { v4 as uuidv4 } from 'uuid';
+
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -22,7 +25,7 @@ const rl = readline.createInterface({
 });
 
 export const updateNft = async (argv: any): Promise<number> => {
-  const { verbose, network, creator, metadata } = argv;
+  const { verbose, network, did, creator, file } = argv;
 
   console.log(chalk.dim(`Updating NFT data ...`));
 
@@ -42,6 +45,7 @@ export const updateNft = async (argv: any): Promise<number> => {
   if (verbose)
     console.log(chalk.dim(`Using creator: '${creatorAccount.getId()}'\n`));
 
+  const ddo = await nvm.assets.resolve(did);
   
   const s3 = new AWS.S3({
     accessKeyId: 'L70GX5Y60L73KUKH92KV' ,
@@ -50,6 +54,71 @@ export const updateNft = async (argv: any): Promise<number> => {
     s3ForcePathStyle: true, // needed with minio?
     signatureVersion: 'v4'
   });
+
+  const bucket = 'bucket-' + uuidv4()
+
+  await s3.createBucket({Bucket: bucket}).promise()
+
+  const readOnlyAnonUserPolicy = {
+    Version: "2012-10-17",
+    Statement: [
+      {
+        Sid: "AddPerm",
+        Effect: "Allow",
+        Principal: "*",
+        Action: [
+          "s3:GetObject"
+        ],
+        Resource: [
+          "arn:aws:s3:::" + bucket + "/*"
+        ]
+      }
+    ]
+  };
+  
+  // convert policy JSON into string and assign into params
+  const bucketPolicyParams = {Bucket: bucket, Policy: JSON.stringify(readOnlyAnonUserPolicy)};
+  
+  // set the new policy on the selected bucket
+  await s3.putBucketPolicy(bucketPolicyParams).promise()
+
+  var fileStream = fs.createReadStream(file);
+  fileStream.on('error', function(err) {
+    console.log('File Error', err);
+  });
+
+  const uploadParams = {Bucket: bucket, Key: `file-${uuidv4()}`, Body: fileStream}
+
+  let res = await s3.upload(uploadParams).promise()
+  let url = res.Location
+  console.log(url)
+
+  const metadata = ddo.findServiceByType("metadata").attributes;
+  metadata.main.files = [{url, contentType: ''}]
+
+  const encryptedFilesResponse = await nvm.gateway.encrypt(
+    ddo.id,
+    JSON.stringify(metadata.main.files),
+    'PSK-RSA'
+  )
+  metadata.encryptedFiles = JSON.parse(encryptedFilesResponse)['hash']
+  console.log(metadata, ddo.service)
+  metadata.main.dateCreated = new Date().toISOString().replace(/\.[0-9]{3}/, "")
+  console.log(metadata.main.dateCreated)
+
+  metadata.main.files = [{contentType: '', index: 0} as File]
+  ddo.created = new Date().toISOString().replace(/\.[0-9]{3}/, "")
+  await nvm.metadata.updateDDO(did, ddo)
+
+  // ddo.updateService(nvm, metadata)
+
+  /*
+  let res = await s3.putObject(params).promise()
+  console.log(res)
+  */
+
+
+
 
   /*
   let ddoMetadata;

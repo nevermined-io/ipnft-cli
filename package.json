@@ -14,10 +14,12 @@
   "dependencies": {
     "@nevermined-io/nevermined-sdk-js": "/home/sami/nvm/sdk-js",
     "@truffle/hdwallet-provider": "^1.4.1",
+    "@types/uuid": "^8.3.3",
     "aws-sdk": "^2.1046.0",
     "axios": "^0.24.0",
     "chalk": "^4.1.1",
     "dotenv": "^10.0.0",
+    "uuid": "^8.3.2",
     "yargs": "^17.0.1"
   },
   "devDependencies": {
