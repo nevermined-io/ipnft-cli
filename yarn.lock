@@ -408,8 +408,10 @@
     "@gnosis.pm/safe-core-sdk" "^1.0.0"
     "@gnosis.pm/safe-deployments" "^1.4.0"
 
-"@nevermined-io/nevermined-sdk-js@file:../sdk-js":
-  version "0.14.3"
+"@nevermined-io/nevermined-sdk-js@0.14.4":
+  version "0.14.4"
+  resolved "https://registry.yarnpkg.com/@nevermined-io/nevermined-sdk-js/-/nevermined-sdk-js-0.14.4.tgz#eca7557bf7df987ea6abb6af0413318e0d964e06"
+  integrity sha512-nYtxm2TsIRdh1FpfEcu9/bx3tG7NyoTd5PYLF+DbXueB4fIItly5HT3lDWetSKQvr8709XrHzK3EXvitg6QSzQ==
   dependencies:
     "@nevermined-io/contracts" "^1.2.3"
     "@nevermined-io/secret-store-client" "^0.0.16"

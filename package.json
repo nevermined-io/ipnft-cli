@@ -12,7 +12,7 @@
     "vitadao": "./dist/index.js"
   },
   "dependencies": {
-    "@nevermined-io/nevermined-sdk-js": "/home/sami/nvm/sdk-js",
+    "@nevermined-io/nevermined-sdk-js": "0.14.4",
     "@truffle/hdwallet-provider": "^1.4.1",
     "@types/uuid": "^8.3.3",
     "aws-sdk": "^2.1046.0",
