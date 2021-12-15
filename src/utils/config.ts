@@ -87,6 +87,11 @@ const config: CliConfig = {
       //"0x8c8b41e349f1a0a3c2b3ed342058170f995dbb8e",
       // WETH
       "0xc778417E063141139Fce010982780140Aa0cD5Ab",
+    s3: {
+        endpoint: process.env.S3ENDPOINT,
+        accessKeyId: process.env.S3ACCESSKEYID,
+        secretAccessKey: process.env.S3SECRETACCESSKEY
+    },
     seed: process.env.MNEMONIC,
     buyerKeyfile: process.env.BUYER_KEYFILE,
     buyerPassword: process.env.BUYER_PASSWORD,
@@ -119,6 +124,11 @@ const config: CliConfig = {
       // WETH
       "0xc778417E063141139Fce010982780140Aa0cD5Ab",
     seed: process.env.MNEMONIC,
+    s3: {
+      endpoint: process.env.S3ENDPOINT,
+      accessKeyId: process.env.S3ACCESSKEYID,
+      secretAccessKey: process.env.S3SECRETACCESSKEY
+    },
     buyerKeyfile: process.env.BUYER_KEYFILE,
     buyerPassword: process.env.BUYER_PASSWORD,
     creatorKeyfile: process.env.CREATOR_KEYFILE,
