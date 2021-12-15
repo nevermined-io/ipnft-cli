@@ -8,16 +8,9 @@ import {
 } from "../../utils";
 import chalk from "chalk";
 import { File } from "@nevermined-io/nevermined-sdk-js";
-import readline from "readline";
 import fs from 'fs';
 import AWS from 'aws-sdk';
 import { v4 as uuidv4 } from 'uuid';
-
-
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
 
 export const updateNft = async (argv: any): Promise<number> => {
   const { verbose, network, did, creator, file } = argv;
@@ -43,9 +36,7 @@ export const updateNft = async (argv: any): Promise<number> => {
   const ddo = await nvm.assets.resolve(did);
   
   const s3 = new AWS.S3({
-    accessKeyId: 'L70GX5Y60L73KUKH92KV' ,
-    secretAccessKey: 'S4Qa6m9QM16TKvuVzImXaCfYG4JLgykMKDpp+5Zz' ,
-    endpoint: 'http://127.0.0.1:9000' ,
+    ...config.s3,
     s3ForcePathStyle: true, // needed with minio?
     signatureVersion: 'v4'
   });
@@ -86,7 +77,7 @@ export const updateNft = async (argv: any): Promise<number> => {
 
   let res = await s3.upload(uploadParams).promise()
   let url = res.Location
-  console.log(url)
+  console.log(`Uploaded to ${url}`)
 
   const metadata = ddo.findServiceByType("metadata").attributes;
   metadata.main.files = [{url, contentType: ''}]
@@ -97,13 +88,12 @@ export const updateNft = async (argv: any): Promise<number> => {
     'PSK-RSA'
   )
   metadata.encryptedFiles = JSON.parse(encryptedFilesResponse)['hash']
-  console.log(metadata, ddo.service)
   metadata.main.dateCreated = new Date().toISOString().replace(/\.[0-9]{3}/, "")
-  console.log(metadata.main.dateCreated)
 
   metadata.main.files = [{contentType: '', index: 0} as File]
   ddo.created = new Date().toISOString().replace(/\.[0-9]{3}/, "")
   await nvm.metadata.updateDDO(did, ddo)
+  console.log('Updated DDO')
 
   return StatusCodes.OK;
 };

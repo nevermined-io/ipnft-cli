@@ -11,6 +11,12 @@ interface CliConfig {
   [index: string]: ConfigEntry;
 }
 
+export interface S3Config {
+  endpoint: string;
+  accessKeyId: string;
+  secretAccessKey: string;
+}
+
 export interface ConfigEntry {
   nvm: Config;
   etherscanUrl: string;
@@ -23,6 +29,7 @@ export interface ConfigEntry {
   creatorPassword?: string;
   minterKeyfile?: string;
   minterPassword?: string;
+  s3?: S3Config;
 }
 
 const config: CliConfig = {
@@ -49,6 +56,11 @@ const config: CliConfig = {
     buyerPassword: process.env.BUYER_PASSWORD,
     creatorKeyfile: process.env.CREATOR_KEYFILE,
     creatorPassword: process.env.CREATOR_PASSWORD,
+    s3: {
+      endpoint: 'http://127.0.0.1:9000',
+      accessKeyId: 'L70GX5Y60L73KUKH92KV',
+      secretAccessKey: 'S4Qa6m9QM16TKvuVzImXaCfYG4JLgykMKDpp+5Zz'
+    },
     minterKeyfile: process.env.MINTER_KEYFILE,
     minterPassword: process.env.MINTER_PASSWORD
   } as ConfigEntry,
