@@ -30,7 +30,6 @@ export const accountsList = async (argv: any): Promise<number> => {
   // if we have a token use it, otherwise fall back to ETH decimals
   const decimals =
     token !== null ? await token.decimals() : Constants.ETHDecimals;
-
   const symbol = token !== null ? await token.symbol() : "ETH";
 
   const loadedAccounts = await Promise.all(

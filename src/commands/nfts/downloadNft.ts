@@ -9,7 +9,7 @@ import {
 import chalk from "chalk";
 
 export const downloadNft = async (argv: any): Promise<number> => {
-  const { verbose, network, did, consumer, destination } = argv;
+  const { verbose, network, did, consumer, destination, gasMultiplier } = argv;
 
   console.log(chalk.dim(`Downloading NFT ...`));
 

@@ -45,6 +45,18 @@ to switch the ERC20 token address (optional):
 export ERC20_TOKEN_ADDRESS="<your erc20 compatible token address>"
 ```
 
+S3 configuration:
+```
+export S3ENDPOINT="<S3 base url>"
+export S3ACCESSKEYID=<your access key id>
+export S3SECRETACCESSKEY=<your access key>
+```
+
+Etherscan API
+```
+export ETHERSCANAPIKEY=<your apikey>
+```
+
 ```
 $vitadao --help
 
@@ -59,16 +71,20 @@ Commands:
   vitadao agreements show agreementId                                   Shows details about an agreement
   vitadao nfts                                                          NFTs functions
   vitadao nfts show did                                                 Retrieves information about an NFT
-  vitadao nfts create [creator] [metadata]                              Creates an NFT
+  vitadao nfts create [creator] [metadata] [--file data]                Creates an NFT
   vitadao nfts mint did [minter] [uri]                                  Mints an NFT
   vitadao nfts order did [buyer]                                        Orders an NFT by paying for it to the escrow
   vitadao nfts transfer agreementId [seller]                            Transfers the NFT to the buyer and the funds from the escrow to the seller
+  vitadao nfts update did [file]                                        Uploads the data of an NFT to S3
   vitadao nfts download did [consumer] [destination]                    Downloads the data of an NFT
   vitadao nfts search [search]                                          Searches for NFTs
 
 Options:
-      --help     Show help                                              [boolean]
-      --version  Show version number                                    [boolean]
-  -v, --verbose  Run with verbose logging                               [boolean]
-  -n, --network  the network to use                 [string] [default: "mainnet"]
+      --help            Show help  [boolean]
+      --version         Show version number  [boolean]
+  -v, --verbose         Run with verbose logging  [boolean]
+  -m, --gas-multiplier  Gas multiplier for transactions  [number]
+  -g, --gas             Gas limit for transactions  [number]
+  -n, --network         the network to use  [string] [default: "mainnet"]
+
 ```

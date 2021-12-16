@@ -4,7 +4,8 @@ import {
   loadNftContract,
   findAccountOrFirst,
   printNftTokenBanner,
-  loadNevermined
+  loadNevermined,
+  getTxParams
 } from "../../utils";
 import chalk from "chalk";
 import { zeroX } from "@nevermined-io/nevermined-sdk-js/dist/node/utils";
@@ -16,6 +17,8 @@ export const mintNft = async (argv: any): Promise<number> => {
 
   const config = getConfig(network as string);
   const { nvm } = await loadNevermined(config, network, verbose);
+
+  let nftContract = await nvm.contracts.loadNft721(config.nftTokenAddress);
 
   if (!nvm.keeper) {
     return StatusCodes.FAILED_TO_CONNECT;
@@ -69,10 +72,7 @@ export const mintNft = async (argv: any): Promise<number> => {
 
   const to = await nvm.keeper.didRegistry.getDIDOwner(ddo.id);
 
-  await nft.methods
-    .mint(to, zeroX(ddo.shortId()), uri || register.url)
-    .send({ from: minterAccount.getId() });
-
+  await nftContract.mintWithURL(to, zeroX(ddo.shortId()), uri || register.url, minterAccount, getTxParams(argv))
   console.log(
     chalk.dim(
       `Minted NFT '${chalk.whiteBright(ddo.id)}' to '${chalk.whiteBright(to)}'!`

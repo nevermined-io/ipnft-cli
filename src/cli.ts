@@ -11,6 +11,7 @@ import {
   createNft,
   listAgreements,
   downloadNft,
+  updateNft,
   searchNft
 } from "./commands";
 import chalk from "chalk";
@@ -29,6 +30,16 @@ const y = yargs(hideBin(process.argv))
     alias: "v",
     type: "boolean",
     description: "Run with verbose logging"
+  })
+  .option("gas-multiplier", {
+    alias: "m",
+    type: "number",
+    description: "Gas multiplier for transactions"
+  })
+  .option("gas", {
+    alias: "g",
+    type: "number",
+    description: "Gas limit for transactions"
   })
   .option("network", {
     alias: "n",
@@ -151,6 +162,11 @@ y.command(
         "Creates an NFT",
         yargs => {
           return yargs
+            .option("file", {
+              alias: "f",
+              type: "string",
+              description: "File to be uploaded to S3"
+            })
             .positional("creator", {
               describe: "the address of the author of the NFT",
               type: "string"
@@ -242,6 +258,24 @@ y.command(
         },
         async argv => {
           return cmdHandler(downloadNft, argv);
+        }
+      )
+      .command(
+        "update did [file]",
+        "Uploads the data of an NFT",
+        yargs => {
+          return yargs
+            .positional("did", {
+              describe: "the agreement id address",
+              type: "string"
+            })
+            .positional("file", {
+              describe: "the destination of the files",
+              type: "string"
+            });
+        },
+        async argv => {
+          return cmdHandler(updateNft, argv);
         }
       )
       .command(

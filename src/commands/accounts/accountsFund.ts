@@ -1,4 +1,4 @@
-import { getConfig, loadNevermined, StatusCodes } from "../../utils";
+import { getConfig, getTxParams, loadNevermined, StatusCodes } from "../../utils";
 import chalk from "chalk";
 
 export const accountsFund = async (argv: any): Promise<number> => {
@@ -17,7 +17,7 @@ export const accountsFund = async (argv: any): Promise<number> => {
   try {
     await nvm.faucet.requestEth(account);
     console.log(chalk.dim(`Funded ETH to ${chalk.whiteBright(account)}`));
-  } catch (err) {
+  } catch (err: any) {
     console.log(
       chalk.red(
         `Funding ETH to ${chalk.whiteBright(account)} failed! ${err.message}`
@@ -28,9 +28,9 @@ export const accountsFund = async (argv: any): Promise<number> => {
   }
 
   try {
-    await nvm.keeper.dispenser.requestTokens(100, account);
+    await nvm.keeper.dispenser.requestTokens(100, account, getTxParams(argv));
     console.log(chalk.dim(`Funded Tokens to ${chalk.whiteBright(account)}`));
-  } catch (err) {
+  } catch (err: any) {
     console.log(
       chalk.red(
         `Funding Tokens to ${chalk.whiteBright(account)} failed! ${err.message}`

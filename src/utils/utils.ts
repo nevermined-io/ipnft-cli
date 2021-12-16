@@ -9,6 +9,11 @@ import { Constants, StatusCodes } from "./enums";
 import { ConfigEntry } from "./config";
 import { AbiItem } from "web3-utils";
 import CustomToken from "./CustomToken";
+import { TxParameters } from "@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/ContractBase";
+import axios from 'axios';
+import fs from 'fs';
+import AWS from 'aws-sdk';
+import { v4 as uuidv4 } from 'uuid';
 
 const loadContract = (
   config: Config,
@@ -93,6 +98,78 @@ export const printErc20TokenBanner = async (token: Token) => {
     )
   );
 };
+
+export const uploadFile = async (config: ConfigEntry, file: string) : Promise<string> => {
+  const s3 = new AWS.S3({
+    ...config.s3,
+    s3ForcePathStyle: true, // needed with minio?
+    signatureVersion: 'v4'
+  });
+
+  const bucket = 'bucket-' + uuidv4()
+
+  await s3.createBucket({Bucket: bucket}).promise()
+
+  const readOnlyAnonUserPolicy = {
+    Version: "2012-10-17",
+    Statement: [
+      {
+        Sid: "AddPerm",
+        Effect: "Allow",
+        Principal: "*",
+        Action: [
+          "s3:GetObject"
+        ],
+        Resource: [
+          "arn:aws:s3:::" + bucket + "/*"
+        ]
+      }
+    ]
+  };
+  
+  // convert policy JSON into string and assign into params
+  const bucketPolicyParams = {Bucket: bucket, Policy: JSON.stringify(readOnlyAnonUserPolicy)};
+  
+  // set the new policy on the selected bucket
+  await s3.putBucketPolicy(bucketPolicyParams).promise()
+
+  var fileStream = fs.createReadStream(file);
+  fileStream.on('error', function(err) {
+    console.log('File Error', err);
+  });
+
+  const uploadParams = {Bucket: bucket, Key: `file-${uuidv4()}`, Body: fileStream}
+
+  let res = await s3.upload(uploadParams).promise()
+  return res.Location
+}
+
+export const getTxParams = (argv: any) : TxParameters => {
+  let apikey = process.env['ETHERSCANAPIKEY']
+  let { gasMultiplier, gas, verbose, gasPrice } = argv;
+  let shortProgress = async (a:any) => {
+    if (a.stage === 'sent') {
+      console.log(`Sending TX ${a.contractName}.${a.method} with ${a.gas} gas`)
+    } else if (a.stage === 'txHash') {
+      console.log(`Got TX hash for ${a.contractName}.${a.method}: ${a.txHash}`)
+      let res = await axios.get(
+        `https://api.etherscan.io/api?module=gastracker&action=gasestimate&gasprice=${a.gasPrice}&apikey=${apikey}`,
+      )
+      console.log(`Estimated confirmation time: ${res.data.result} seconds`)
+    } else if (a.stage === 'receipt') {
+      console.log(`Got TX receipt for ${a.contractName}.${a.method} with hash ${a.receipt.transactionHash}`)
+    }
+  }
+  let printProgress = (a:any) => {
+    console.log(a)
+  }
+  return {
+    gasMultiplier,
+    gasPrice,
+    progress: verbose ? printProgress : shortProgress,
+    gas
+  } 
+}
 
 export const loadNevermined = async (
   config: ConfigEntry,

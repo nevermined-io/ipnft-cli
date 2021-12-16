@@ -6,6 +6,7 @@ import {
   printNftTokenBanner,
   loadNevermined,
   Constants,
+  getTxParams,
 } from "../../utils";
 import chalk from "chalk";
 import {
@@ -52,7 +53,7 @@ export const orderNft = async (argv: any): Promise<number> => {
     chalk.dim(`Price: ${chalk.whiteBright(price)} ${chalk.whiteBright(symbol)}`)
   );
 
-  const agreementId = await nvm.nfts.order721(did, buyerAccount);
+  const agreementId = await nvm.nfts.order721(did, buyerAccount, getTxParams(argv));
 
   console.log(
     chalk.dim(

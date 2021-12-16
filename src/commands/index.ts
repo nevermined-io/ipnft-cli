@@ -6,6 +6,7 @@ export * from "./nfts/orderNft";
 export * from "./nfts/transferNft";
 export * from "./nfts/downloadNft";
 export * from "./nfts/searchNft";
+export * from "./nfts/updateNft";
 // accounts
 export * from "./accounts/accountsList";
 export * from "./accounts/accountsFund";

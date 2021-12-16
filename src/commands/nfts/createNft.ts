@@ -5,7 +5,9 @@ import {
   findAccountOrFirst,
   printNftTokenBanner,
   loadNevermined,
-  Constants
+  getTxParams,
+  Constants,
+  uploadFile
 } from "../../utils";
 import chalk from "chalk";
 import { MetaDataMain, File } from "@nevermined-io/nevermined-sdk-js";
@@ -20,7 +22,7 @@ const rl = readline.createInterface({
 });
 
 export const createNft = async (argv: any): Promise<number> => {
-  const { verbose, network, creator, metadata } = argv;
+  const { verbose, network, creator, metadata, file } = argv;
 
   console.log(chalk.dim(`Creating NFT ...`));
 
@@ -55,11 +57,17 @@ export const createNft = async (argv: any): Promise<number> => {
       })
     );
 
-    const url = await new Promise(resolve =>
-      rl.question("URL to the Asset: ", url => {
-        resolve(url);
-      })
-    );
+    let url : string
+    if (file) {
+      url = await uploadFile(config, file)
+      console.log(`Uploaded ${file} to ${url}`)
+    } else {
+      url = await new Promise(resolve =>
+        rl.question("URL to the Asset: ", url => {
+          resolve(url);
+        })
+      );
+    }
 
     const price: number = await new Promise(resolve =>
       rl.question("Price of the Asset: ", price => {
@@ -106,7 +114,9 @@ export const createNft = async (argv: any): Promise<number> => {
     // @ts-ignore
     new AssetRewards(creatorAccount.getId(), ddoPrice),
     config.nftTokenAddress,
-    token ? token.getAddress() : config.erc20TokenAddress
+    token ? token.getAddress() : config.erc20TokenAddress,
+    undefined,
+    getTxParams(argv)
   );
 
   const register = (await nvm.keeper.didRegistry.getDIDRegister(
@@ -118,7 +128,7 @@ export const createNft = async (argv: any): Promise<number> => {
 
   console.log(
     chalk.dim(
-      `Created NFT '${chalk.whiteBright(ddo.id)} with service endpoint: ${chalk.whiteBright(register.url)}`
+      `Created NFT ${chalk.whiteBright(ddo.id)} with service endpoint: ${chalk.whiteBright(register.url)}`
     )
   );
 
