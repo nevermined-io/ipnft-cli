@@ -4,7 +4,8 @@ import {
   loadNftContract,
   findAccountOrFirst,
   printNftTokenBanner,
-  loadNevermined
+  loadNevermined,
+  uploadFile
 } from "../../utils";
 import chalk from "chalk";
 import { File } from "@nevermined-io/nevermined-sdk-js";
@@ -34,49 +35,9 @@ export const updateNft = async (argv: any): Promise<number> => {
     console.log(chalk.dim(`Using creator: '${creatorAccount.getId()}'\n`));
 
   const ddo = await nvm.assets.resolve(did);
+
+  const url = await uploadFile(config, file)
   
-  const s3 = new AWS.S3({
-    ...config.s3,
-    s3ForcePathStyle: true, // needed with minio?
-    signatureVersion: 'v4'
-  });
-
-  const bucket = 'bucket-' + uuidv4()
-
-  await s3.createBucket({Bucket: bucket}).promise()
-
-  const readOnlyAnonUserPolicy = {
-    Version: "2012-10-17",
-    Statement: [
-      {
-        Sid: "AddPerm",
-        Effect: "Allow",
-        Principal: "*",
-        Action: [
-          "s3:GetObject"
-        ],
-        Resource: [
-          "arn:aws:s3:::" + bucket + "/*"
-        ]
-      }
-    ]
-  };
-  
-  // convert policy JSON into string and assign into params
-  const bucketPolicyParams = {Bucket: bucket, Policy: JSON.stringify(readOnlyAnonUserPolicy)};
-  
-  // set the new policy on the selected bucket
-  await s3.putBucketPolicy(bucketPolicyParams).promise()
-
-  var fileStream = fs.createReadStream(file);
-  fileStream.on('error', function(err) {
-    console.log('File Error', err);
-  });
-
-  const uploadParams = {Bucket: bucket, Key: `file-${uuidv4()}`, Body: fileStream}
-
-  let res = await s3.upload(uploadParams).promise()
-  let url = res.Location
   console.log(`Uploaded to ${url}`)
 
   const metadata = ddo.findServiceByType("metadata").attributes;

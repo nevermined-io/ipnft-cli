@@ -162,6 +162,11 @@ y.command(
         "Creates an NFT",
         yargs => {
           return yargs
+            .option("file", {
+              alias: "f",
+              type: "string",
+              description: "File to be uploaded to S3"
+            })
             .positional("creator", {
               describe: "the address of the author of the NFT",
               type: "string"
