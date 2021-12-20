@@ -3,11 +3,11 @@
 ### Installation
 
 ```
-npm install -g @nevermined-io/vitadao-cli
+npm install -g @nevermined-io/ipnft-cli
 
 or
 
-yarn global add @nevermined-io/vitadao-cli
+yarn global add @nevermined-io/ipnft-cli
 ```
 
 ### Usage
