@@ -1,4 +1,4 @@
-## Vita DAO CLI
+## IPNFT CLI
 
 ### Installation
 
@@ -58,26 +58,26 @@ export ETHERSCANAPIKEY=<your apikey>
 ```
 
 ```
-$vitadao --help
+$ ipnft --help
 
-usage: vitadao <command>
+usage: ipnft <command>
 
 Commands:
-  vitadao accounts                                                      Accounts functions
-  vitadao accounts list                                                 List all accounts
-  vitadao accounts fund account                                         Funds an account on a test net
-  vitadao agreements                                                    Agreements functions
-  vitadao agreements list did                                           Lists all agreements for given DID
-  vitadao agreements show agreementId                                   Shows details about an agreement
-  vitadao nfts                                                          NFTs functions
-  vitadao nfts show did                                                 Retrieves information about an NFT
-  vitadao nfts create [creator] [metadata] [--file data]                Creates an NFT
-  vitadao nfts mint did [minter] [uri]                                  Mints an NFT
-  vitadao nfts order did [buyer]                                        Orders an NFT by paying for it to the escrow
-  vitadao nfts transfer agreementId [seller]                            Transfers the NFT to the buyer and the funds from the escrow to the seller
-  vitadao nfts update did [file]                                        Uploads the data of an NFT to S3
-  vitadao nfts download did [consumer] [destination]                    Downloads the data of an NFT
-  vitadao nfts search [search]                                          Searches for NFTs
+  ipnft accounts                                                      Accounts functions
+  ipnft accounts list                                                 List all accounts
+  ipnft accounts fund account                                         Funds an account on a test net
+  ipnft agreements                                                    Agreements functions
+  ipnft agreements list did                                           Lists all agreements for given DID
+  ipnft agreements show agreementId                                   Shows details about an agreement
+  ipnft nfts                                                          NFTs functions
+  ipnft nfts show did                                                 Retrieves information about an NFT
+  ipnft nfts create [creator] [metadata] [--file data]                Creates an NFT
+  ipnft nfts mint did [minter] [uri]                                  Mints an NFT
+  ipnft nfts order did [buyer]                                        Orders an NFT by paying for it to the escrow
+  ipnft nfts transfer agreementId [seller]                            Transfers the NFT to the buyer and the funds from the escrow to the seller
+  ipnft nfts update did [file]                                        Uploads the data of an NFT to S3
+  ipnft nfts download did [consumer] [destination]                    Downloads the data of an NFT
+  ipnft nfts search [search]                                          Searches for NFTs
 
 Options:
       --help            Show help  [boolean]

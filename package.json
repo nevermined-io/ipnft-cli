@@ -1,15 +1,16 @@
 {
   "name": "@nevermined-io/ipnft-cli",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "main": "index.js",
   "author": "Nevermined <root@nevermined.io>",
   "license": "Apache-2.0",
   "scripts": {
     "build": "tsc",
-    "build:watch": "yarn build --watch"
+    "build:watch": "yarn build --watch",
+	"start": "ts-node src/index.ts"
   },
   "bin": {
-    "vitadao": "./dist/index.js"
+    "ipnft": "./dist/index.js"
   },
   "dependencies": {
     "@nevermined-io/nevermined-sdk-js": "0.14.4",
