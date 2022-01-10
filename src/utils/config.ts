@@ -116,13 +116,11 @@ const config: CliConfig = {
     nftTokenAddress:
       process.env.NFT_TOKEN_ADDRESS ||
       // IPNFT Contract from Vita DAO
-      "0xa25fd714136E2128e38fB434DBfE344276071CD0",
+      "0x42D2354EF0b54279516f5799791086F2f499086E",
     erc20TokenAddress:
       process.env.ERC20_TOKEN_ADDRESS ||
-      // Nevermined Token
-      //"0x8c8b41e349f1a0a3c2b3ed342058170f995dbb8e",
-      // WETH
-      "0xc778417E063141139Fce010982780140Aa0cD5Ab",
+      // USDC
+      "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
     seed: process.env.MNEMONIC,
     s3: {
       endpoint: process.env.S3ENDPOINT,
