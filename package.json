@@ -1,6 +1,6 @@
 {
   "name": "@nevermined-io/ipnft-cli",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "main": "index.js",
   "author": "Nevermined <root@nevermined.io>",
   "license": "Apache-2.0",
