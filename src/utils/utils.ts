@@ -203,7 +203,7 @@ export const loadNevermined = async (
     // check if we have a different token configured
     if (
       config.erc20TokenAddress.toLowerCase() !==
-      (token && nvm.keeper.token.address.toLowerCase())
+      (token.address && token.address.toLowerCase())
     ) {
       token = await CustomToken.getInstanceByAddress(
         {
